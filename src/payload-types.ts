@@ -243,6 +243,10 @@ export interface Product {
    */
   category?: string | null;
   available?: boolean | null;
+  /**
+   * Markiert beliebte oder häufig bestellte Produkte
+   */
+  popular?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -508,6 +512,7 @@ export interface ProductsSelect<T extends boolean = true> {
   price?: T;
   category?: T;
   available?: T;
+  popular?: T;
   updatedAt?: T;
   createdAt?: T;
 }

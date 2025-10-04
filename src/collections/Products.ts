@@ -8,7 +8,7 @@ export const Products: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'price', 'category', 'available'],
+    defaultColumns: ['name', 'price', 'category', 'available', 'popular'],
   },
   fields: [
     {
@@ -40,6 +40,15 @@ export const Products: CollectionConfig = {
       type: 'checkbox',
       label: 'Verfügbar zum Bestellen',
       defaultValue: true,
+    },
+    {
+      name: 'popular',
+      type: 'checkbox',
+      label: 'Beliebt / Häufig bestellt',
+      defaultValue: false,
+      admin: {
+        description: 'Markiert beliebte oder häufig bestellte Produkte',
+      },
     },
   ],
 }
