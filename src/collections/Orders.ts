@@ -2,6 +2,13 @@ import type { CollectionConfig } from 'payload'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
+  access: {
+    admin: ({ req: { user } }) => user?.role === 'admin',
+    create: ({ req: { user } }) => user?.role === 'admin',
+    read: () => true, // All authenticated users can read orders
+    update: ({ req: { user } }) => user?.role === 'admin',
+    delete: ({ req: { user } }) => user?.role === 'admin',
+  },
   labels: {
     singular: 'Bestellung',
     plural: 'Bestellungen',

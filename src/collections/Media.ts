@@ -7,7 +7,11 @@ export const Media: CollectionConfig = {
     plural: 'Medien',
   },
   access: {
+    admin: ({ req: { user } }) => !!user, // All authenticated users can access media admin
+    create: ({ req: { user } }) => !!user, // All users can upload (for profile pictures)
     read: () => true,
+    update: ({ req: { user } }) => !!user,
+    delete: ({ req: { user } }) => user?.role === 'admin',
   },
   fields: [
     {
