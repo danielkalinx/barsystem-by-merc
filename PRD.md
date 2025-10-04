@@ -18,11 +18,11 @@ A web application for managing drink tabs at K.Ö.H.V. Mercuria, a Vienna-based 
 - **Tab Balance** - Current debt amount
 - **Payment History** - Full log of all payments and penalties
 
-### Drinks Collection
+### Products Collection
 - **Name** (required)
 - **Price** (required)
-- **Category** (optional - e.g., Beer, Spirits, Soft Drinks)
-- **Available** - Boolean to enable/disable drinks
+- **Category** (optional - e.g., Getränke, Toast, Zigarren, Snus)
+- **Available** - Boolean to enable/disable products from ordering
 
 ### Sessions Collection
 - **Session Number/Name** (auto-generated or manual)
@@ -48,8 +48,8 @@ A web application for managing drink tabs at K.Ö.H.V. Mercuria, a Vienna-based 
 - **Session** - Reference to session (required)
 - **Member** - Who is being charged (required)
 - **Bartender** - Who placed the order (required)
-- **Items** - Array of drink items
-  - Drink reference
+- **Items** - Array of product items
+  - Product reference (drinks, toast, zigarren, snus, etc.)
   - Quantity
   - Price at time of order (historical pricing)
 - **Total Amount** (calculated)
@@ -94,11 +94,11 @@ A web application for managing drink tabs at K.Ö.H.V. Mercuria, a Vienna-based 
 
 ## Main Pages (Frontend - ShadCN Components)
 
-### 1. Price List Page (`/prices`)
-- Display all available drinks with prices
+### 1. Product Catalog Page (`/prices`)
+- Display all available products (drinks, toast, zigarren, snus, etc.) with prices
 - Categorized view (optional grouping)
 - **Ordering Flow** (ONLY available during active session, bartenders only):
-  - Add drinks to cart
+  - Add products to cart
   - Select member who will be charged
   - Review cart and total
   - Confirm order → Creates order record, updates member tab
@@ -109,8 +109,8 @@ A web application for managing drink tabs at K.Ö.H.V. Mercuria, a Vienna-based 
   - Session start time
   - Active bartenders with estimated work times
   - Orders placed during session (real-time or refreshable)
-  - Session statistics (total revenue, drinks sold count)
-  - Most popular drinks during session
+  - Session statistics (total revenue, products sold count)
+  - Most popular products during session
 - **Historical Sessions** (archive view):
   - List all past sessions
   - Filter/search by date, bartenders
@@ -154,8 +154,8 @@ A web application for managing drink tabs at K.Ö.H.V. Mercuria, a Vienna-based 
 5. All devices share the same session state (orders, cart, etc.)
 
 ### Placing an Order (Bartender during active session)
-1. Navigate to Price List page
-2. Add drinks to cart
+1. Navigate to Product Catalog page
+2. Add products to cart
 3. Select member to charge
 4. Review total
 5. Confirm → Order created, member tab updated
@@ -184,18 +184,18 @@ A web application for managing drink tabs at K.Ö.H.V. Mercuria, a Vienna-based 
 ### Backend
 - **CMS**: PayloadCMS 3.0
 - **Database**: MongoDB
-- **Collections**: Members, Drinks, Sessions, Orders, Payments
+- **Collections**: Members, Products, Sessions, Orders, Payments
 
 ### Data Integrity
 - **Always maintain history/logs** - Never delete orders, payments, or sessions
-- **Historical pricing** - Store drink price at time of order
+- **Historical pricing** - Store product price at time of order
 - **Audit trail** - Track who made changes (admin actions)
 
 ### Session Constraints
 - Only one active session at a time (enforce at database level)
 - Bartenders must be selected BEFORE session activation
 - **Orders can ONLY be placed during an active session** - No ordering outside of sessions
-- Price list is view-only when no session is active
+- Product catalog is view-only when no session is active
 
 ### Multi-Device Session Sharing
 - **Session is device-independent** - Same session accessible from all devices
@@ -211,7 +211,7 @@ A web application for managing drink tabs at K.Ö.H.V. Mercuria, a Vienna-based 
 
 Admins can manage:
 - Members (CRUD operations)
-- Drinks (CRUD operations)
+- Products (CRUD operations)
 - Sessions (Create, Close, View historical)
 - Orders (View only, created via frontend)
 - Payments (Create payment/penalty records)

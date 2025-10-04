@@ -69,6 +69,11 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    members: Member;
+    products: Product;
+    sessions: Session;
+    orders: Order;
+    payments: Payment;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -77,6 +82,11 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    members: MembersSelect<false> | MembersSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    sessions: SessionsSelect<false> | SessionsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
+    payments: PaymentsSelect<false> | PaymentsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -86,7 +96,7 @@ export interface Config {
   };
   globals: {};
   globalsSelect: {};
-  locale: null;
+  locale: 'de';
   user: User & {
     collection: 'users';
   };
@@ -158,6 +168,141 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "members".
+ */
+export interface Member {
+  id: string;
+  firstName: string;
+  lastName: string;
+  couleurname: string;
+  profilePicture?: (string | null) | Media;
+  rank: 'bursche' | 'fuchs';
+  /**
+   * Automatisch basierend auf Rang gesetzt: Bursche (#A57D42, #E10909, #FFFFFF) oder Fuchs (#E10909, #FFFFFF, #E10909)
+   */
+  rankColors?:
+    | {
+        color?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Wird automatisch bei Bestellungen und Zahlungen aktualisiert
+   */
+  tabBalance?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: string;
+  name: string;
+  /**
+   * Preis in EUR
+   */
+  price: number;
+  /**
+   * z.B. Getränke, Toast, Zigarren, Snus, etc.
+   */
+  category?: string | null;
+  available?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sessions".
+ */
+export interface Session {
+  id: string;
+  /**
+   * Automatisch generiert oder manuell eingegeben
+   */
+  sessionName?: string | null;
+  status: 'active' | 'closed';
+  createdBy: string | User;
+  startTime?: string | null;
+  /**
+   * Null wenn Sitzung aktiv ist
+   */
+  endTime?: string | null;
+  /**
+   * Müssen VOR der Sitzungsaktivierung definiert werden
+   */
+  bartenders?:
+    | {
+        member: string | Member;
+        estimatedStartTime?: string | null;
+        estimatedEndTime?: string | null;
+        bartenderStatus?: ('active' | 'pending' | 'approved') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Wird automatisch aus Bestellungen berechnet
+   */
+  totalRevenue?: number | null;
+  statistics?: {
+    totalProductsSold?: number | null;
+    mostPopularProduct?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: string;
+  session: string | Session;
+  member: string | Member;
+  bartender: string | Member;
+  items?:
+    | {
+        product: string | Product;
+        quantity: number;
+        /**
+         * Historische Preisführung - speichert Produktpreis zum Bestellzeitpunkt
+         */
+        priceAtOrder: number;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Berechnet aus Positionen (Anzahl × Preis zum Bestellzeitpunkt)
+   */
+  totalAmount: number;
+  status?: ('pending' | 'completed' | 'cancelled') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payments".
+ */
+export interface Payment {
+  id: string;
+  member: string | Member;
+  /**
+   * Positiv für Zahlungen, negativ für Strafen
+   */
+  amount: number;
+  type: 'payment' | 'penalty' | 'adjustment';
+  date: string;
+  /**
+   * Notizen zu dieser Transaktion
+   */
+  notes?: string | null;
+  admin?: (string | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -170,6 +315,26 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: string | Media;
+      } | null)
+    | ({
+        relationTo: 'members';
+        value: string | Member;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: string | Product;
+      } | null)
+    | ({
+        relationTo: 'sessions';
+        value: string | Session;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: string | Order;
+      } | null)
+    | ({
+        relationTo: 'payments';
+        value: string | Payment;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -252,6 +417,102 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "members_select".
+ */
+export interface MembersSelect<T extends boolean = true> {
+  firstName?: T;
+  lastName?: T;
+  couleurname?: T;
+  profilePicture?: T;
+  rank?: T;
+  rankColors?:
+    | T
+    | {
+        color?: T;
+        id?: T;
+      };
+  tabBalance?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  name?: T;
+  price?: T;
+  category?: T;
+  available?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sessions_select".
+ */
+export interface SessionsSelect<T extends boolean = true> {
+  sessionName?: T;
+  status?: T;
+  createdBy?: T;
+  startTime?: T;
+  endTime?: T;
+  bartenders?:
+    | T
+    | {
+        member?: T;
+        estimatedStartTime?: T;
+        estimatedEndTime?: T;
+        bartenderStatus?: T;
+        id?: T;
+      };
+  totalRevenue?: T;
+  statistics?:
+    | T
+    | {
+        totalProductsSold?: T;
+        mostPopularProduct?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  session?: T;
+  member?: T;
+  bartender?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        quantity?: T;
+        priceAtOrder?: T;
+        id?: T;
+      };
+  totalAmount?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payments_select".
+ */
+export interface PaymentsSelect<T extends boolean = true> {
+  member?: T;
+  amount?: T;
+  type?: T;
+  date?: T;
+  notes?: T;
+  admin?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -49,9 +49,9 @@ The app uses Next.js App Router with **route groups** to separate concerns:
 **Must be created in `src/collections/` and registered in `src/payload.config.ts`:**
 
 1. **Members** - Fraternity members with profile, rank (Bursche/Fuchs), rank colors, tab balance, payment history
-2. **Drinks** - Drink catalog with name, price, category, availability status
+2. **Products** - Product catalog (drinks, toast, zigarren, snus, etc.) with name, price, category, availability status
 3. **Sessions** - Bar sessions with bartenders, orders, revenue, statistics
-4. **Orders** - Individual drink orders with session/member/bartender refs, items array, historical pricing
+4. **Orders** - Individual product orders with session/member/bartender refs, items array, historical pricing
 5. **Payments** - Payment/penalty history log with member ref, amount, type, admin notes
 
 ### Key Business Rules
@@ -89,6 +89,14 @@ Key settings:
 - **Admin user collection**: Uses `Users` collection for authentication
 - **Collections**: Import from `src/collections/` and add to `collections` array
 - **Types**: Auto-generated at `src/payload-types.ts` (run `pnpm generate:types`)
+- **Localization**: German-only (`de`) - Admin UI displays in German
+  - All collection and field labels are in German
+  - Slugs and field names remain in English for code consistency
+  - Collection labels: Administratoren (Users), Mitglieder (Members), Produkte (Products), Sitzungen (Sessions), Bestellungen (Orders), Zahlungen (Payments)
+- **Storage**: Vercel Blob Storage for media uploads
+  - Package: `@payloadcms/storage-vercel-blob`
+  - Client uploads enabled to bypass Vercel's 4.5MB server upload limit
+  - Configured for `media` collection
 
 ### Path Aliases
 
@@ -114,6 +122,7 @@ TypeScript path aliases (defined in `tsconfig.json`):
 Required environment variables:
 - `DATABASE_URI` - MongoDB connection string
 - `PAYLOAD_SECRET` - Secret key for Payload
+- `BLOB_READ_WRITE_TOKEN` - Vercel Blob storage token (automatically set by Vercel when Blob storage is added)
 
 Copy `.env.example` to `.env` and configure values.
 
@@ -132,8 +141,8 @@ Copy `.env.example` to `.env` and configure values.
 - Admin approves/denies requests in real-time
 
 ### Placing Orders (Bartender)
-1. Navigate to Price List (`/prices`)
-2. Add drinks to cart
+1. Navigate to Product Catalog (`/prices`)
+2. Add products to cart
 3. Select member to charge
 4. Confirm → Creates order, updates member tab balance
 
@@ -147,7 +156,7 @@ Copy `.env.example` to `.env` and configure values.
 **UI Framework**: ShadCN/UI components with Tailwind CSS
 
 **Main Pages:**
-- **`/prices`**: Price list with cart/ordering (bartenders only during active session, view-only otherwise)
+- **`/prices`**: Product catalog (drinks, toast, zigarren, snus, etc.) with cart/ordering (bartenders only during active session, view-only otherwise)
 - **`/session`**: Current session info + historical sessions archive
 - **`/members`**: Member list with profiles, tab balances, payment management
 

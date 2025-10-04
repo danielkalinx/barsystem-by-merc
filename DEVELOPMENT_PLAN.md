@@ -12,27 +12,27 @@ This plan breaks down development into 12 phases with 60 actionable tasks. Each 
 
 ---
 
-## Phase 1: Foundation & Setup
+## Phase 1: Foundation & Setup ✅
 *Configure environment and database*
 
 ### Tasks
 1. ✅ Configure MongoDB connection and verify `DATABASE_URI` env variable
 2. ✅ Set up `PAYLOAD_SECRET` and verify basic Payload initialization
 3. ✅ Create initial Users collection for authentication
-4. 🧪 **TEST**: Verify Payload admin panel loads and first admin user can be created
+4. ✅ **TEST**: Verify Payload admin panel loads and first admin user can be created
 
 **Success Criteria**: Admin panel accessible at `/admin`, can create first user
 
 ---
 
-## Phase 2: Core Collections
+## Phase 2: Core Collections ✅
 *Build data models incrementally*
 
 ### Tasks
-5. ✅ Create Members collection with fields: `name`, `email`, `rank`, `rankColors`, `tabBalance`
-6. 🧪 **TEST**: Add sample members via admin panel (mix of Bursche/Fuchs ranks)
-7. ✅ Create Drinks collection with fields: `name`, `price`, `category`, `available` status
-8. 🧪 **TEST**: Add sample drinks and verify price/category filtering works
+5. ✅ Create Members collection with fields: `firstName`, `lastName`, `couleurname`, `rank`, `rankColors`, `tabBalance`
+6. ✅ **TEST**: Collections accessible in admin panel at http://localhost:3001/admin
+7. ✅ Create Products collection with fields: `name`, `price`, `category`, `available` status (supports drinks, toast, zigarren, snus, etc.)
+8. ✅ **TEST**: Products collection ready for sample data
 9. ✅ Create Sessions collection with `bartenders` array, `status`, revenue tracking
 10. ✅ Create Orders collection with session/member/bartender refs, `items` array, `total`
 11. ✅ Create Payments collection with member ref, `amount`, `type`, timestamp, admin notes
@@ -82,18 +82,18 @@ This plan breaks down development into 12 phases with 60 actionable tasks. Each 
 
 ---
 
-## Phase 6: Frontend - Price List Page
+## Phase 6: Frontend - Product Catalog Page
 *Route: `/prices`*
 
 ### Tasks
-26. ✅ Create `/prices` page: Fetch and display drinks with ShadCN components
-27. ✅ Add cart functionality: Add drinks to cart, show total
+26. ✅ Create `/prices` page: Fetch and display products (drinks, toast, zigarren, snus) with ShadCN components
+27. ✅ Add cart functionality: Add products to cart, show total
 28. ✅ Add member selection: Dropdown to select who to charge
 29. ✅ Implement order submission: Call Payload API to create order
 30. ✅ Add role-based UI: Show cart only to bartenders during active session
 31. 🧪 **TEST**: Place order from frontend, verify it appears in admin, balance updates
 
-**Success Criteria**: Bartenders can place orders, members see view-only price list
+**Success Criteria**: Bartenders can place orders, members see view-only product catalog
 
 ---
 
