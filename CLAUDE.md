@@ -48,11 +48,12 @@ The app uses Next.js App Router with **route groups** to separate concerns:
 
 **Must be created in `src/collections/` and registered in `src/payload.config.ts`:**
 
-1. **Members** - Fraternity members with profile, rank (Bursche/Fuchs), rank colors, tab balance, payment history
-2. **Products** - Product catalog (drinks, toast, zigarren, snus, etc.) with name, price, category, availability status
-3. **Sessions** - Bar sessions with bartenders, orders, revenue, statistics
-4. **Orders** - Individual product orders with session/member/bartender refs, items array, historical pricing
-5. **Payments** - Payment/penalty history log with member ref, amount, type, admin notes
+1. **Members** - Authentication collection AND member data. Includes email/password, role (Admin/Member), rank reference, tab balance, payment history
+2. **Ranks** - Rank definitions with label, slug, and three color values (flag). Separate collection for reusable rank data
+3. **Products** - Product catalog (drinks, toast, zigarren, snus, etc.) with name, price, category, availability status
+4. **Sessions** - Bar sessions with bartenders, orders, revenue, statistics
+5. **Orders** - Individual product orders with session/member/bartender refs, items array, historical pricing
+6. **Payments** - Payment/penalty history log with member ref, amount, type, admin notes
 
 ### Key Business Rules
 
@@ -63,16 +64,21 @@ The app uses Next.js App Router with **route groups** to separate concerns:
 - Sessions are shared across ALL devices - new logins join existing active session
 - Multi-device sync via **short polling (5-10s) or manual refresh** (no WebSockets for MVP)
 
-**Member Ranks & Colors:**
-- **Bursche**: `#A57D42, #E10909, #FFFFFF` (brown/gold, red, white)
-- **Fuchs**: `#E10909, #FFFFFF, #E10909` (red, white, red)
-- Colors displayed as visual flag/badge
+**Member Ranks (stored in Ranks collection):**
+- **Fuchs** (New member/pledge): `#E10909, #FFFFFF, #E10909` (red, white, red)
+- **Bursche** (Full member): `#A57D42, #E10909, #FFFFFF` (brown/gold, red, white)
+- **Aktive** (Active member): Colors to be defined in Ranks collection
+- **Verkehrsaktive** (Semi-active member): Colors to be defined in Ranks collection
+- **Alte Herren** (Alumni/old boys): Colors to be defined in Ranks collection
+- **Externe** (External member/guest): Colors to be defined in Ranks collection
+- Members reference a Rank, which contains the three color values forming a visual flag/badge
 
 **Authentication & Roles:**
 - All pages require login (no public access)
-- **Admin**: Full Payload access, manage members/sessions/payments
-- **Bartender**: Session-based role, can place orders from any device during their session, can request to be added mid-session
-- **Member**: View-only (own tab, price list, session info)
+- **Members collection is the auth collection** - all members can log in with email/password
+- **Admin role** (Members.role = 'admin'): Full Payload access, manage members/sessions/payments
+- **Member role** (Members.role = 'member', default): View-only (own tab, price list, session info)
+- **Bartender role** (temporary, via Sessions.bartenders): Can place orders from any device during their session, can request to be added mid-session
 
 **Data Integrity:**
 - Always maintain history/logs - NEVER delete orders, payments, or sessions
@@ -86,13 +92,13 @@ The app uses Next.js App Router with **route groups** to separate concerns:
 Key settings:
 - **Database**: MongoDB via `mongooseAdapter` (connection string from `DATABASE_URI` env var)
 - **Editor**: Lexical rich text editor
-- **Admin user collection**: Uses `Users` collection for authentication
+- **Admin user collection**: Uses `Members` collection for authentication (set via `admin.user` config)
 - **Collections**: Import from `src/collections/` and add to `collections` array
 - **Types**: Auto-generated at `src/payload-types.ts` (run `pnpm generate:types`)
 - **Localization**: German-only (`de`) - Admin UI displays in German
   - All collection and field labels are in German
   - Slugs and field names remain in English for code consistency
-  - Collection labels: Administratoren (Users), Mitglieder (Members), Produkte (Products), Sitzungen (Sessions), Bestellungen (Orders), Zahlungen (Payments)
+  - Collection labels: Mitglieder (Members - auth collection), Ränge (Ranks), Produkte (Products), Sitzungen (Sessions), Bestellungen (Orders), Zahlungen (Payments)
 - **Storage**: Vercel Blob Storage for media uploads
   - Package: `@payloadcms/storage-vercel-blob`
   - Client uploads enabled to bypass Vercel's 4.5MB server upload limit

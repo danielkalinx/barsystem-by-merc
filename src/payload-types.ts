@@ -63,13 +63,13 @@ export type SupportedTimezones =
 
 export interface Config {
   auth: {
-    users: UserAuthOperations;
+    members: MemberAuthOperations;
   };
   blocks: {};
   collections: {
-    users: User;
     media: Media;
     members: Member;
+    ranks: Rank;
     products: Product;
     sessions: Session;
     orders: Order;
@@ -80,9 +80,9 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     members: MembersSelect<false> | MembersSelect<true>;
+    ranks: RanksSelect<false> | RanksSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     sessions: SessionsSelect<false> | SessionsSelect<true>;
     orders: OrdersSelect<false> | OrdersSelect<true>;
@@ -97,15 +97,15 @@ export interface Config {
   globals: {};
   globalsSelect: {};
   locale: 'de';
-  user: User & {
-    collection: 'users';
+  user: Member & {
+    collection: 'members';
   };
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
-export interface UserAuthOperations {
+export interface MemberAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -122,30 +122,6 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: string;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -172,24 +148,58 @@ export interface Media {
  */
 export interface Member {
   id: string;
+  /**
+   * Systemrolle für Berechtigungen. Bartender wird über Sitzungen zugewiesen.
+   */
+  role: 'admin' | 'member';
   firstName: string;
   lastName: string;
   couleurname: string;
   profilePicture?: (string | null) | Media;
-  rank: 'bursche' | 'fuchs';
   /**
-   * Automatisch basierend auf Rang gesetzt: Bursche (#A57D42, #E10909, #FFFFFF) oder Fuchs (#E10909, #FFFFFF, #E10909)
+   * Rang des Mitglieds - bitte aus Ränge-Sammlung auswählen
    */
-  rankColors?:
-    | {
-        color?: string | null;
-        id?: string | null;
-      }[]
-    | null;
+  rank?: (string | null) | Rank;
   /**
    * Wird automatisch bei Bestellungen und Zahlungen aktualisiert
    */
   tabBalance?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ranks".
+ */
+export interface Rank {
+  id: string;
+  label: string;
+  /**
+   * Eindeutiger Wert für den Rang (z.B. "fuchs", "bursche")
+   */
+  value: string;
+  colors: {
+    /**
+     * Hex-Farbwert (z.B. #E10909)
+     */
+    color: string;
+    id?: string | null;
+  }[];
   updatedAt: string;
   createdAt: string;
 }
@@ -223,7 +233,7 @@ export interface Session {
    */
   sessionName?: string | null;
   status: 'active' | 'closed';
-  createdBy: string | User;
+  createdBy: string | Member;
   startTime?: string | null;
   /**
    * Null wenn Sitzung aktiv ist
@@ -297,7 +307,7 @@ export interface Payment {
    * Notizen zu dieser Transaktion
    */
   notes?: string | null;
-  admin?: (string | null) | User;
+  admin?: (string | null) | Member;
   updatedAt: string;
   createdAt: string;
 }
@@ -309,16 +319,16 @@ export interface PayloadLockedDocument {
   id: string;
   document?:
     | ({
-        relationTo: 'users';
-        value: string | User;
-      } | null)
-    | ({
         relationTo: 'media';
         value: string | Media;
       } | null)
     | ({
         relationTo: 'members';
         value: string | Member;
+      } | null)
+    | ({
+        relationTo: 'ranks';
+        value: string | Rank;
       } | null)
     | ({
         relationTo: 'products';
@@ -338,8 +348,8 @@ export interface PayloadLockedDocument {
       } | null);
   globalSlug?: string | null;
   user: {
-    relationTo: 'users';
-    value: string | User;
+    relationTo: 'members';
+    value: string | Member;
   };
   updatedAt: string;
   createdAt: string;
@@ -351,8 +361,8 @@ export interface PayloadLockedDocument {
 export interface PayloadPreference {
   id: string;
   user: {
-    relationTo: 'users';
-    value: string | User;
+    relationTo: 'members';
+    value: string | Member;
   };
   key?: string | null;
   value?:
@@ -380,28 +390,6 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
- */
-export interface UsersSelect<T extends boolean = true> {
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
-    | T
-    | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
-      };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
@@ -423,18 +411,43 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "members_select".
  */
 export interface MembersSelect<T extends boolean = true> {
+  role?: T;
   firstName?: T;
   lastName?: T;
   couleurname?: T;
   profilePicture?: T;
   rank?: T;
-  rankColors?:
+  tabBalance?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ranks_select".
+ */
+export interface RanksSelect<T extends boolean = true> {
+  label?: T;
+  value?: T;
+  colors?:
     | T
     | {
         color?: T;
         id?: T;
       };
-  tabBalance?: T;
   updatedAt?: T;
   createdAt?: T;
 }

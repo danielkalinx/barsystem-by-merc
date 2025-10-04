@@ -33,7 +33,7 @@ export const Sessions: CollectionConfig = {
     {
       name: 'createdBy',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'members',
       required: true,
       label: 'Erstellt von (Admin)',
     },

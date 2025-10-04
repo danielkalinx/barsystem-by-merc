@@ -2,15 +2,30 @@ import type { CollectionConfig } from 'payload'
 
 export const Members: CollectionConfig = {
   slug: 'members',
+  auth: true, // Enable authentication for this collection
   labels: {
     singular: 'Mitglied',
     plural: 'Mitglieder',
   },
   admin: {
     useAsTitle: 'couleurname',
-    defaultColumns: ['couleurname', 'firstName', 'lastName', 'rank', 'tabBalance'],
+    defaultColumns: ['couleurname', 'firstName', 'lastName', 'role', 'rank', 'tabBalance'],
   },
   fields: [
+    {
+      name: 'role',
+      type: 'select',
+      required: true,
+      label: 'Rolle',
+      options: [
+        { label: 'Admin', value: 'admin' },
+        { label: 'Mitglied', value: 'member' },
+      ],
+      defaultValue: 'member',
+      admin: {
+        description: 'Systemrolle für Berechtigungen. Bartender wird über Sitzungen zugewiesen.',
+      },
+    },
     {
       name: 'firstName',
       type: 'text',
@@ -37,50 +52,12 @@ export const Members: CollectionConfig = {
     },
     {
       name: 'rank',
-      type: 'select',
-      required: true,
+      type: 'relationship',
+      relationTo: 'ranks',
+      required: false,
       label: 'Rang',
-      options: [
-        { label: 'Bursche', value: 'bursche' },
-        { label: 'Fuchs', value: 'fuchs' },
-      ],
-      defaultValue: 'fuchs',
-    },
-    {
-      name: 'rankColors',
-      type: 'array',
-      label: 'Rangfarben (3 Hex-Werte)',
       admin: {
-        readOnly: true,
-        description: 'Automatisch basierend auf Rang gesetzt: Bursche (#A57D42, #E10909, #FFFFFF) oder Fuchs (#E10909, #FFFFFF, #E10909)',
-      },
-      fields: [
-        {
-          name: 'color',
-          type: 'text',
-          label: 'Farbe',
-        },
-      ],
-      hooks: {
-        beforeChange: [
-          ({ siblingData }) => {
-            // Set rank colors based on rank
-            if (siblingData.rank === 'bursche') {
-              return [
-                { color: '#A57D42' },
-                { color: '#E10909' },
-                { color: '#FFFFFF' },
-              ]
-            } else if (siblingData.rank === 'fuchs') {
-              return [
-                { color: '#E10909' },
-                { color: '#FFFFFF' },
-                { color: '#E10909' },
-              ]
-            }
-            return siblingData.rankColors
-          },
-        ],
+        description: 'Rang des Mitglieds - bitte aus Ränge-Sammlung auswählen',
       },
     },
     {

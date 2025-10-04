@@ -3,6 +3,14 @@
     "shadcn": {
       "command": "npx",
       "args": ["shadcn@latest", "mcp"]
+    },
+    "MongoDB": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "mongodb-mcp-server@latest", "--readOnly"],
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "mongodb+srv://Vercel-Admin-merc-barsystem-db-dev:IeHkOjgRRTT162FJ@merc-barsystem-db-dev.5iqbwbx.mongodb.net/?retryWrites=true&w=majority"
+      }
     }
   }
 }

@@ -60,7 +60,7 @@ export const Payments: CollectionConfig = {
     {
       name: 'admin',
       type: 'relationship',
-      relationTo: 'users',
+      relationTo: 'members',
       label: 'Bearbeitet von (Admin)',
     },
   ],

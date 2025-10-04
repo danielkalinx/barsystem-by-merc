@@ -6,17 +6,32 @@ A web application for managing drink tabs at K.Ö.H.V. Mercuria, a Vienna-based 
 
 ## Core Entities
 
-### Members Collection
+### Members Collection (Authentication & User Data)
+- **Email** (required, unique) - Used for authentication
+- **Password** (required) - Hashed password for login
 - **First Name** (required)
 - **Last Name** (required)
 - **Couleurname** - fraternity nickname (required)
 - **Profile Picture** (optional)
-- **Rank** - Either "Bursche" or "Fuchs" (required)
-- **Rank Colors** - Three hex color values forming a flag:
-  - **Bursche**: #A57D42, #E10909, #FFFFFF
-  - **Fuchs**: #E10909, #FFFFFF, #E10909
+- **Role** - System role for permissions (required):
+  - **Admin** - Full system access, can manage all data
+  - **Member** - Default role, view-only access
+- **Rank** - Reference to Ranks collection (required)
 - **Tab Balance** - Current debt amount
 - **Payment History** - Full log of all payments and penalties
+
+**Note**: This collection serves as both the authentication collection and member data storage. All members can log in. Bartender role is assigned temporarily during active sessions.
+
+### Ranks Collection
+- **Label** - Display name (required) - e.g., "Fuchs", "Bursche"
+- **Value** - Unique slug (required) - e.g., "fuchs", "bursche"
+- **Colors** - Three hex color values forming a flag (required):
+  - **Fuchs**: #E10909, #FFFFFF, #E10909
+  - **Bursche**: #A57D42, #E10909, #FFFFFF
+  - **Aktive**: Colors to be defined
+  - **Verkehrsaktive**: Colors to be defined
+  - **Alte Herren**: Colors to be defined
+  - **Externe**: Colors to be defined
 
 ### Products Collection
 - **Name** (required)
@@ -68,29 +83,33 @@ A web application for managing drink tabs at K.Ö.H.V. Mercuria, a Vienna-based 
 
 ### Authentication
 - **All pages require login** - No public access
-- Use PayloadCMS built-in authentication
+- **Members collection serves as the auth collection** - All members can log in using email/password
+- Use PayloadCMS built-in authentication with Members collection
 
-### Roles
-1. **Admin**
+### Roles (stored in Members.role field)
+1. **Admin** (permanent role)
    - Full access to Payload backend
    - Can register and manage members
    - Can open/close sessions
    - Can manage payments and penalties
    - Can view all historical data
+   - Members with this role have admin privileges
 
-2. **Bartender** (session-based role)
-   - Selected from Members collection when creating a session (BEFORE activation)
-   - Can place orders during their assigned session from any device
-   - Multiple bartenders can work simultaneously from different devices
-   - Can view current session information
-   - Non-bartenders can request to be added during an active session
-   - Limited to active session only
-
-3. **Member** (default)
+2. **Member** (default role)
    - Can view their own tab balance
    - Can view price list
    - Can view current session info
    - Cannot place orders (must go through bartender)
+   - All fraternity members get this role by default
+
+3. **Bartender** (temporary session-based role)
+   - NOT stored in Members.role - assigned via Sessions.bartenders array
+   - Selected from Members when creating a session (BEFORE activation)
+   - Can place orders during their assigned session from any device
+   - Multiple bartenders can work simultaneously from different devices
+   - Can view current session information
+   - Non-bartenders can request to be added during an active session
+   - Role only active during the session
 
 ## Main Pages (Frontend - ShadCN Components)
 

@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
+    "clear:db": "node scripts/clear-db.mjs",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
@@ -43,6 +44,7 @@
     "eslint": "^9.16.0",
     "eslint-config-next": "15.4.4",
     "jsdom": "26.1.0",
+    "mongodb": "^6.20.0",
     "playwright": "1.54.1",
     "playwright-core": "1.54.1",
     "prettier": "^3.4.2",

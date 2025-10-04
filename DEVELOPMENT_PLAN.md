@@ -30,7 +30,7 @@ This plan breaks down development into 12 phases with 60 actionable tasks. Each 
 
 ### Tasks
 5. ✅ Create Members collection with fields: `firstName`, `lastName`, `couleurname`, `rank`, `rankColors`, `tabBalance`
-6. ✅ **TEST**: Collections accessible in admin panel at http://localhost:3001/admin
+6. ✅ **TEST**: Collections accessible in admin panel at http://localhost:3000/admin
 7. ✅ Create Products collection with fields: `name`, `price`, `category`, `available` status (supports drinks, toast, zigarren, snus, etc.)
 8. ✅ **TEST**: Products collection ready for sample data
 9. ✅ Create Sessions collection with `bartenders` array, `status`, revenue tracking
