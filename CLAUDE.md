@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **PayloadCMS 3.0** project built with **Next.js 15** and **React 19**, using MongoDB for the database. It serves as a bar management system template with both a CMS admin panel and a frontend application.
+**Bar Management System for K.Ö.H.V. Mercuria** - A Vienna-based student fraternity drink tab management system built with PayloadCMS 3.0, Next.js 15, and MongoDB. The system manages bar sessions, member drink orders, tab tracking, and semester-based payment collection.
+
+**See PRD.md for complete feature specifications and business logic.**
 
 ## Development Commands
 
@@ -31,20 +33,51 @@ This is a **PayloadCMS 3.0** project built with **Next.js 15** and **React 19**,
 
 The app uses Next.js App Router with **route groups** to separate concerns:
 
-- **`src/app/(frontend)/`** - Public-facing frontend routes
-  - `page.tsx` - Homepage
-  - `layout.tsx` - Frontend layout wrapper
-  - `styles.css` - Frontend styles
+- **`src/app/(frontend)/`** - ShadCN/UI-based frontend application
+  - Main pages: `/prices`, `/session`, `/members`
+  - Requires authentication for all routes
+  - Uses ShadCN components and Tailwind CSS
 
 - **`src/app/(payload)/`** - PayloadCMS admin and API routes
   - `admin/[[...segments]]/` - Catch-all admin panel routes
   - `api/[...slug]/` - Catch-all Payload REST API routes
   - `api/graphql/` - GraphQL API endpoint
-  - `api/graphql-playground/` - GraphQL playground (dev)
   - `layout.tsx` - Admin layout wrapper
-  - `custom.scss` - Admin panel custom styles
 
-- **`src/app/my-route/`** - Example custom API route
+### Core Collections (PayloadCMS)
+
+**Must be created in `src/collections/` and registered in `src/payload.config.ts`:**
+
+1. **Members** - Fraternity members with profile, rank (Bursche/Fuchs), rank colors, tab balance, payment history
+2. **Drinks** - Drink catalog with name, price, category, availability status
+3. **Sessions** - Bar sessions with bartenders, orders, revenue, statistics
+4. **Orders** - Individual drink orders with session/member/bartender refs, items array, historical pricing
+5. **Payments** - Payment/penalty history log with member ref, amount, type, admin notes
+
+### Key Business Rules
+
+**Session Management:**
+- **Only ONE active session globally** (device-independent) - enforce at database level
+- Bartenders must be selected BEFORE session activation (minimum 1)
+- Orders can ONLY be placed during an active session
+- Sessions are shared across ALL devices - new logins join existing active session
+- Multi-device sync via **short polling (5-10s) or manual refresh** (no WebSockets for MVP)
+
+**Member Ranks & Colors:**
+- **Bursche**: `#A57D42, #E10909, #FFFFFF` (brown/gold, red, white)
+- **Fuchs**: `#E10909, #FFFFFF, #E10909` (red, white, red)
+- Colors displayed as visual flag/badge
+
+**Authentication & Roles:**
+- All pages require login (no public access)
+- **Admin**: Full Payload access, manage members/sessions/payments
+- **Bartender**: Session-based role, can place orders from any device during their session, can request to be added mid-session
+- **Member**: View-only (own tab, price list, session info)
+
+**Data Integrity:**
+- Always maintain history/logs - NEVER delete orders, payments, or sessions
+- Store drink price at time of order (historical pricing)
+- Track who made changes (audit trail with admin references)
 
 ### PayloadCMS Configuration
 
@@ -54,12 +87,8 @@ Key settings:
 - **Database**: MongoDB via `mongooseAdapter` (connection string from `DATABASE_URI` env var)
 - **Editor**: Lexical rich text editor
 - **Admin user collection**: Uses `Users` collection for authentication
-- **Collections**: Defined in `src/collections/`
-  - `Users.ts` - Auth-enabled admin users
-  - `Media.ts` - File uploads with alt text field
+- **Collections**: Import from `src/collections/` and add to `collections` array
 - **Types**: Auto-generated at `src/payload-types.ts` (run `pnpm generate:types`)
-- **Sharp**: Image processing configured globally
-- **Import map**: Generated at `src/app/(payload)/admin/importMap.js`
 
 ### Path Aliases
 
@@ -72,42 +101,57 @@ TypeScript path aliases (defined in `tsconfig.json`):
 **Integration Tests** (Vitest):
 - Located in `tests/int/`
 - Config: `vitest.config.mts`
-- Uses jsdom environment
-- Setup file: `vitest.setup.ts`
-- Supports React Testing Library
+- Uses jsdom environment, React Testing Library
 - Pattern: `*.int.spec.ts`
 
 **E2E Tests** (Playwright):
 - Located in `tests/e2e/`
 - Config: `playwright.config.ts`
-- Runs on Chromium by default
-- Auto-starts dev server at `http://localhost:3000`
-- Generates HTML reports
+- Runs on Chromium, auto-starts dev server at `http://localhost:3000`
 
 ### Environment Setup
 
 Required environment variables:
 - `DATABASE_URI` - MongoDB connection string
 - `PAYLOAD_SECRET` - Secret key for Payload
-- `MONGODB_URI` - (Legacy, same as DATABASE_URI)
 
 Copy `.env.example` to `.env` and configure values.
 
-### Docker Development (Optional)
+## Key Workflows (See PRD.md for Details)
 
-To use Docker for MongoDB:
-1. Set `MONGODB_URI=mongodb://127.0.0.1/<dbname>` in `.env`
-2. Update `<dbname>` in `docker-compose.yml` to match
-3. Run `docker-compose up` (add `-d` for background)
+### Opening a Session (Admin)
+1. Check no session is active
+2. Select bartenders from Members (min 1, BEFORE activation)
+3. Set estimated work times
+4. Activate → Available on ALL devices
 
-## Key Technical Details
+### Multi-Device Session Joining
+- New device logs in → Joins existing active session automatically
+- Bartenders: Get ordering capabilities
+- Non-bartenders: View-only + option to request bartender access
+- Admin approves/denies requests in real-time
 
-- **Node version**: 18.20.2+ or 20.9.0+
-- **Package manager**: pnpm 9 or 10 (required)
-- **TypeScript**: Strict mode enabled
-- **Module system**: ES modules (`.mjs`, `.mts` file extensions supported)
-- **Webpack config**: Custom extension alias in `next.config.mjs` for `.ts`/`.tsx` resolution
-- **Build optimization**: Uses `--max-old-space-size=8000` for large builds
+### Placing Orders (Bartender)
+1. Navigate to Price List (`/prices`)
+2. Add drinks to cart
+3. Select member to charge
+4. Confirm → Creates order, updates member tab balance
+
+### Payment Management (Admin)
+- Record full/partial payments after semester
+- Add penalties for unpaid/late tabs
+- System maintains complete payment history log
+
+## Frontend Implementation
+
+**UI Framework**: ShadCN/UI components with Tailwind CSS
+
+**Main Pages:**
+- **`/prices`**: Price list with cart/ordering (bartenders only during active session, view-only otherwise)
+- **`/session`**: Current session info + historical sessions archive
+- **`/members`**: Member list with profiles, tab balances, payment management
+
+**Data Sync**: Use short polling (5-10s intervals) or manual refresh buttons for cross-device updates (no WebSockets for MVP)
 
 ## Working with Collections
 
@@ -117,10 +161,10 @@ To use Docker for MongoDB:
 4. Run `pnpm generate:types` to update TypeScript types
 5. Restart dev server to see changes in admin panel
 
-## Common Patterns
+## Technical Requirements
 
-- **Adding API routes**: Create in `src/app/` (can use route groups)
-- **Custom admin fields**: Define in collection `fields` array
-- **Access control**: Configure in collection `access` property
-- **File uploads**: Set `upload: true` in collection config
-- **Rich text**: Lexical editor is default, configured globally
+- **Node version**: 18.20.2+ or 20.9.0+
+- **Package manager**: pnpm 9 or 10 (required)
+- **TypeScript**: Strict mode enabled
+- **Module system**: ES modules
+- **Build optimization**: Uses `--max-old-space-size=8000` for large builds
