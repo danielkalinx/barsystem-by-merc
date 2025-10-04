@@ -25,6 +25,16 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    meta: {
+      favicon: '/merc-icon.png',
+      ogImage: '/merc-icon.png',
+    },
+    components: {
+      graphics: {
+        Logo: '@/components/Logo#Logo',
+        Icon: '@/components/Icon#Icon',
+      },
+    },
   },
   collections: [Media, Members, Ranks, Products, Sessions, Orders, Payments],
   editor: lexicalEditor(),
