@@ -2,6 +2,7 @@ import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { de } from '@payloadcms/translations/languages/de'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -24,18 +25,13 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    i18n: {
-      supportedLanguages: {
-        de: {
-          label: 'Deutsch',
-          rtl: false,
-        },
-      },
-      fallbackLanguage: 'de',
-    },
   },
   collections: [Media, Members, Ranks, Products, Sessions, Orders, Payments],
   editor: lexicalEditor(),
+  i18n: {
+    supportedLanguages: { de },
+    fallbackLanguage: 'de',
+  },
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
@@ -43,11 +39,6 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
   }),
-  localization: {
-    locales: ['de'],
-    defaultLocale: 'de',
-    fallback: true,
-  },
   sharp,
   plugins: [
     payloadCloudPlugin(),
