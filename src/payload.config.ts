@@ -25,10 +25,6 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    meta: {
-      favicon: '/merc-icon.png',
-      ogImage: '/merc-icon.png',
-    },
     components: {
       graphics: {
         Logo: '@/components/Logo#Logo',
