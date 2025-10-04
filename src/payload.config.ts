@@ -24,6 +24,15 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    i18n: {
+      supportedLanguages: {
+        de: {
+          label: 'Deutsch',
+          rtl: false,
+        },
+      },
+      fallbackLanguage: 'de',
+    },
   },
   collections: [Media, Members, Ranks, Products, Sessions, Orders, Payments],
   editor: lexicalEditor(),
