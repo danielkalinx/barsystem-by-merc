@@ -49,6 +49,11 @@ export const Members: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       label: 'Profilbild',
+      required: false,
+      admin: {
+        description: 'Optional: Profilbild hochladen',
+        condition: (data, siblingData, { user }) => !!user, // Only show when user is logged in (hide during first-user creation)
+      },
     },
     {
       name: 'rank',
