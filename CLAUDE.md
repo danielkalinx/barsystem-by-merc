@@ -168,3 +168,4 @@ Copy `.env.example` to `.env` and configure values.
 - **TypeScript**: Strict mode enabled
 - **Module system**: ES modules
 - **Build optimization**: Uses `--max-old-space-size=8000` for large builds
+- Keep the design very minimal, almost no styling, And use ShaDcn components wherever possible.
