@@ -1,67 +1,235 @@
-# Payload Blank Template
+# Bar Management System - K.Ö.H.V. Mercuria
 
-This template comes configured with the bare minimum to get started on anything you need.
+A web application for managing drink tabs at K.Ö.H.V. Mercuria, a Vienna-based student fraternity. The system tracks member orders during bar sessions, manages tabs, and facilitates semester-based payment collection.
 
-## Quick start
+## Tech Stack
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+- **Frontend**: Next.js 15 (App Router) + ShadCN/UI + Tailwind CSS
+- **Backend/CMS**: PayloadCMS 3.0
+- **Database**: MongoDB
+- **Storage**: Vercel Blob Storage
+- **Package Manager**: pnpm 9/10 (required)
 
-## Quick Start - local setup
+## Features
 
-To spin up this template locally, follow these steps:
+### Core Functionality
+- **Session Management**: Open/close bar sessions with assigned bartenders
+- **Product Catalog**: Manage drinks, toast, zigarren, snus, and other products
+- **Order Tracking**: Place orders during active sessions, track member tabs
+- **Payment Management**: Record payments, add penalties, maintain full payment history
+- **Multi-Device Support**: Shared sessions across all devices with polling-based sync
+- **Role-Based Access**: Admin, Member, and temporary Bartender roles
 
-### Clone
+### Key Pages
+- **`/prices`**: Product catalog with cart/ordering (bartenders only during active sessions)
+- **`/session`**: Current session info + historical sessions archive
+- **`/members`**: Member list with profiles, tab balances, payment management
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+## Prerequisites
 
-### Development
+- Node.js 18.20.2+ or 20.9.0+
+- pnpm 9 or 10
+- MongoDB instance (local or cloud)
+- Vercel Blob Storage token (for media uploads)
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URI` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+## Installation
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd barsystem-by-merc
+   ```
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
 
-#### Docker (Optional)
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+   Configure the following in `.env`:
+   ```env
+   DATABASE_URI=mongodb://localhost:27017/bar-system
+   PAYLOAD_SECRET=your-secret-key-here
+   BLOB_READ_WRITE_TOKEN=your-vercel-blob-token
+   ```
 
-To do so, follow these steps:
+4. **Generate TypeScript types**
+   ```bash
+   pnpm generate:types
+   ```
 
-- Modify the `MONGODB_URI` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URI` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+5. **Start development server**
+   ```bash
+   pnpm dev
+   ```
 
-## How it works
+6. **Open the app**
+   - Frontend: `http://localhost:3000`
+   - Admin panel: `http://localhost:3000/admin`
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+## Development Commands
 
-### Collections
+### Core Development
+- `pnpm dev` - Start dev server
+- `pnpm devsafe` - Start dev server (clean, removes `.next` cache)
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm lint` - Lint code
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+### Testing
+- `pnpm test` - Run all tests (integration + E2E)
+- `pnpm run test:int` - Run integration tests (Vitest)
+- `pnpm run test:e2e` - Run E2E tests (Playwright)
 
-- #### Users (Authentication)
+### Payload-Specific
+- `pnpm generate:types` - Generate TypeScript types (`src/payload-types.ts`)
+- `pnpm generate:importmap` - Generate import map
+- `pnpm payload [command]` - Payload CLI commands
 
-  Users are auth-enabled collections that have access to the admin panel.
+## Project Structure
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+```
+src/
+├── app/
+│   ├── (frontend)/        # ShadCN/UI frontend application
+│   │   ├── prices/        # Product catalog page
+│   │   ├── session/       # Session management page
+│   │   ├── members/       # Members list and detail pages
+│   │   └── layout.tsx     # Frontend layout
+│   └── (payload)/         # PayloadCMS admin and API
+│       ├── admin/         # Admin panel routes
+│       ├── api/           # REST API routes
+│       └── layout.tsx     # Admin layout
+├── collections/           # PayloadCMS collections
+│   ├── Members.ts         # Auth + member data
+│   ├── Ranks.ts           # Member ranks (Fuchs, Bursche, etc.)
+│   ├── Products.ts        # Product catalog
+│   ├── Sessions.ts        # Bar sessions
+│   ├── Orders.ts          # Order records
+│   └── Payments.ts        # Payment history
+├── components/            # Shared React components
+│   └── ui/               # ShadCN components
+└── payload.config.ts      # Payload configuration
+```
 
-- #### Media
+## Collections Overview
 
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
+### Members (Authentication Collection)
+- Email/password authentication
+- Role: Admin or Member
+- Rank reference (Fuchs, Bursche, Aktive, etc.)
+- Tab balance and payment history
 
-### Docker
+### Ranks
+- Label, slug, and three color values (flag visualization)
+- Pre-defined: Fuchs (#E10909, #FFFFFF, #E10909), Bursche (#A57D42, #E10909, #FFFFFF)
 
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
+### Products
+- Name, price, category, availability status
+- Categories: Getränke, Toast, Zigarren, Snus
 
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
+### Sessions
+- Status: Active or Closed (only ONE active globally)
+- Bartenders array (selected before activation)
+- Orders, revenue, statistics
 
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
+### Orders
+- Session, member, bartender references
+- Items array with historical pricing
+- Status: Pending, Completed, Cancelled
 
-## Questions
+### Payments
+- Member reference
+- Amount (positive for payment, negative for penalty)
+- Type: Payment, Penalty, Adjustment
 
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+## Key Business Rules
+
+### Session Constraints
+- **Only ONE active session globally** (device-independent)
+- Bartenders must be selected BEFORE session activation
+- Orders can ONLY be placed during active sessions
+- Sessions shared across ALL devices
+- Multi-device sync via short polling (5-10s) or manual refresh
+
+### Authentication & Roles
+- All pages require login (no public access)
+- **Admin**: Full Payload access, manage members/sessions/payments
+- **Member**: View-only (own tab, price list, session info)
+- **Bartender**: Temporary role via Sessions.bartenders, can place orders from any device
+
+### Data Integrity
+- Never delete orders, payments, or sessions (maintain history)
+- Store product price at time of order (historical pricing)
+- Track who made changes (audit trail)
+
+## Key Workflows
+
+### Opening a Session (Admin)
+1. Check no session is currently active
+2. Create new session
+3. Select bartenders from members list (min 1, before activation)
+4. Set estimated work times for each bartender
+5. Activate session → Available on ALL devices
+
+### Placing an Order (Bartender)
+1. Navigate to Product Catalog (`/prices`)
+2. Add products to cart
+3. Select member to charge
+4. Review total and confirm
+5. Order created → Member tab updated
+
+### Managing Payments (Admin)
+1. Review member tab balances (typically after semester)
+2. Record payments (full or partial)
+3. Add penalties for unpaid/late tabs
+4. System maintains complete payment history
+
+## Testing
+
+### Integration Tests (Vitest)
+- Location: `tests/int/`
+- Config: `vitest.config.mts`
+- Pattern: `*.int.spec.ts`
+- Uses React Testing Library + jsdom
+
+### E2E Tests (Playwright)
+- Location: `tests/e2e/`
+- Config: `playwright.config.ts`
+- Runs on Chromium, auto-starts dev server
+
+## Deployment
+
+### Environment Variables
+Ensure all required variables are set in production:
+- `DATABASE_URI` - MongoDB connection string
+- `PAYLOAD_SECRET` - Secret key for Payload
+- `BLOB_READ_WRITE_TOKEN` - Vercel Blob storage token
+
+### Build Steps
+1. `pnpm install --frozen-lockfile`
+2. `pnpm generate:types`
+3. `pnpm build`
+4. `pnpm start`
+
+## Documentation
+
+- **PRD**: See `PRD.md` for complete feature specifications
+- **Development Guide**: See `CLAUDE.md` for developer instructions
+- **PayloadCMS Docs**: https://payloadcms.com/docs
+- **Next.js Docs**: https://nextjs.org/docs
+
+## Support
+
+For issues or questions:
+- Create an issue in the repository
+- Contact the development team
+- See PayloadCMS Discord for framework-specific help
+
+## License
+
+[Add your license here]
