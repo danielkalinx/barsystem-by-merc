@@ -1,4 +1,4 @@
-import '@/app/globals.css'
+import './styles.css'
 
 export const metadata = {
   title: 'Bar Management System',
