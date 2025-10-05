@@ -1,19 +1,25 @@
-import React from 'react'
 import './styles.css'
 
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+  title: 'Bar Management System',
+  description: 'K.Ö.H.V. Mercuria Bar Management',
 }
 
-export default async function RootLayout(props: { children: React.ReactNode }) {
-  const { children } = props
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body>
-        <main>{children}</main>
-      </body>
+    <html lang="de" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark')
+              }
+            `,
+          }}
+        />
+      </head>
+      <body className="bg-background text-foreground antialiased">{children}</body>
     </html>
   )
 }

@@ -40,6 +40,13 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: 'de',
+    translations: {
+      de: {
+        general: {
+          payloadSettings: 'System-Einstellungen',
+        },
+      },
+    },
   },
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

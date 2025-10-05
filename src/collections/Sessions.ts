@@ -2,6 +2,13 @@ import type { CollectionConfig } from 'payload'
 
 export const Sessions: CollectionConfig = {
   slug: 'sessions',
+  access: {
+    admin: ({ req: { user } }) => user?.role === 'admin',
+    create: ({ req: { user } }) => user?.role === 'admin',
+    read: () => true, // All authenticated users can read sessions
+    update: ({ req: { user } }) => user?.role === 'admin',
+    delete: ({ req: { user } }) => user?.role === 'admin',
+  },
   labels: {
     singular: 'Sitzung',
     plural: 'Sitzungen',
