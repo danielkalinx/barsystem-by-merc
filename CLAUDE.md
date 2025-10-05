@@ -168,7 +168,7 @@ Copy `.env.example` to `.env` and configure values.
 
 **Data Sync**: Use short polling (5-10s intervals) or manual refresh buttons for cross-device updates (no WebSockets for MVP)
 
-**Language**: All client-facing UI text must be in German. This includes buttons, labels, headings, placeholders, error messages, and any user-visible text in the frontend application (`src/app/(frontend)/`).
+**Language**: All client-facing UI text must be in German. Text can be fun and playful. This includes buttons, labels, headings, placeholders, error messages, and any user-visible text in the frontend application (`src/app/(frontend)/`).
 
 ## Working with Collections
 
