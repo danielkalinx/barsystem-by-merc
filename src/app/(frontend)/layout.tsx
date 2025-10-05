@@ -5,11 +5,7 @@ export const metadata = {
   description: 'K.Ö.H.V. Mercuria Bar Management',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de" suppressHydrationWarning>
       <head>
