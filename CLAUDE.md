@@ -168,6 +168,8 @@ Copy `.env.example` to `.env` and configure values.
 
 **Data Sync**: Use short polling (5-10s intervals) or manual refresh buttons for cross-device updates (no WebSockets for MVP)
 
+**Language**: All client-facing UI text must be in German. This includes buttons, labels, headings, placeholders, error messages, and any user-visible text in the frontend application (`src/app/(frontend)/`).
+
 ## Working with Collections
 
 1. Create new collection in `src/collections/YourCollection.ts`
@@ -186,3 +188,4 @@ Copy `.env.example` to `.env` and configure values.
 - Keep the design very minimal, almost no styling, And use ShaDcn components wherever possible.
 - **IMPORTANT: Always use standard Tailwind classes instead of arbitrary values** (e.g., use `text-3xl` instead of `text-[30px]`, `max-w-sm` instead of `max-w-[360px]`). Only use arbitrary values when absolutely necessary for exact design requirements.
 - Memorize to always use the Tailwind CSS variables from styles.css if possible. Check every time when creating Tailwind classes.
+- **IMPORTANT: Do NOT override ShadCN component default styles with className props** (e.g., avoid `className="h-9 rounded-md"` on Input/Button components). Only add non-conflicting classes like layout/spacing utilities. Let the base component styles (defined in `src/components/ui/`) apply by default for consistency.

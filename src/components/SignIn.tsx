@@ -23,24 +23,16 @@ export default function SignIn() {
         <div className="w-full max-w-sm flex flex-col gap-6">
           {/* Header */}
           <div className="flex flex-col gap-2 text-center">
-            <h1 className="text-3xl font-bold leading-9 text-card-foreground">Sign in</h1>
+            <h1 className="text-3xl font-bold leading-9 text-card-foreground">Auf geht's!</h1>
             <p className="text-sm leading-5 text-muted-foreground">
-              Log in to unlock tailored content and stay connected with your community.
+              Paragraph 11: Porro bibitur! Melde dich an, um den Überblick zu behalten.
             </p>
           </div>
 
           {/* Form */}
           <div className="flex flex-col gap-4">
-            <Input
-              type="email"
-              placeholder="Email"
-              className="h-9 rounded-md border-input bg-background text-sm"
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              className="h-9 rounded-md border-input bg-background text-sm"
-            />
+            <Input type="email" placeholder="E-Mail" />
+            <Input type="password" placeholder="Passwort" />
 
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
@@ -48,20 +40,19 @@ export default function SignIn() {
                   id="keep-signed-in"
                   checked={checked}
                   onCheckedChange={(value) => setChecked(value as boolean)}
-                  className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                 />
-                <label htmlFor="keep-signed-in" className="text-sm font-medium text-foreground">
-                  Keep me signed in
+                <label htmlFor="keep-signed-in" className="text-sm font-medium">
+                  Angemeldet bleiben
                 </label>
               </div>
-              <button className="text-sm text-muted-foreground underline">Forgot password?</button>
+              <button className="text-sm text-muted-foreground underline">
+                Passwort vergessen?
+              </button>
             </div>
           </div>
 
           {/* Submit button */}
-          <Button className="w-full h-9 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground">
-            Sign in
-          </Button>
+          <Button className="w-full">Anmelden</Button>
         </div>
       </div>
 
@@ -71,7 +62,7 @@ export default function SignIn() {
           src="/signin-background.jpg"
           alt="Sign in background"
           fill
-          className="object-cover"
+          className="object-cover opacity-20"
           priority
         />
       </div>
