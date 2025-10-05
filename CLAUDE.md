@@ -184,3 +184,4 @@ Copy `.env.example` to `.env` and configure values.
 - **Module system**: ES modules
 - **Build optimization**: Uses `--max-old-space-size=8000` for large builds
 - Keep the design very minimal, almost no styling, And use ShaDcn components wherever possible.
+- Memorize to always use the Tailwind CSS variables from styles.css if possible. Check every time when creating tailing classes.
