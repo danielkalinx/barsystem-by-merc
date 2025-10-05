@@ -25,7 +25,7 @@ export default function SignIn() {
           <div className="flex flex-col gap-2 text-center">
             <h1 className="text-3xl font-bold leading-9 text-card-foreground">Auf geht's!</h1>
             <p className="text-sm leading-5 text-muted-foreground">
-              Paragraph 11: Porro bibitur! Melde dich an, um den Überblick zu behalten.
+              Paragraph 11: Porro bibitur! Melde dich an, um eine Bar Session zu starten.
             </p>
           </div>
 
