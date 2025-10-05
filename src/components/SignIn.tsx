@@ -20,10 +20,10 @@ export default function SignIn() {
         </div>
 
         {/* Sign in form */}
-        <div className="w-full max-w-[360px] flex flex-col gap-6">
+        <div className="w-full max-w-sm flex flex-col gap-6">
           {/* Header */}
           <div className="flex flex-col gap-2 text-center">
-            <h1 className="text-[30px] font-bold leading-9 text-card-foreground">Sign in</h1>
+            <h1 className="text-3xl font-bold leading-9 text-card-foreground">Sign in</h1>
             <p className="text-sm leading-5 text-muted-foreground">
               Log in to unlock tailored content and stay connected with your community.
             </p>
