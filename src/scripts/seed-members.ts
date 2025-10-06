@@ -28,7 +28,7 @@ const members = [
   {
     email: 'admin@mercuria.at',
     password: 'admin123',
-    role: 'admin',
+    role: 'admin' as const,
     firstName: 'Max',
     lastName: 'Mustermann',
     couleurname: 'Maximus',
@@ -38,7 +38,7 @@ const members = [
   {
     email: 'franz.huber@mercuria.at',
     password: 'member123',
-    role: 'member',
+    role: 'member' as const,
     firstName: 'Franz',
     lastName: 'Huber',
     couleurname: 'Franziskus',
@@ -48,7 +48,7 @@ const members = [
   {
     email: 'thomas.meier@mercuria.at',
     password: 'member123',
-    role: 'member',
+    role: 'member' as const,
     firstName: 'Thomas',
     lastName: 'Meier',
     couleurname: 'Thor',
@@ -58,7 +58,7 @@ const members = [
   {
     email: 'peter.schmidt@mercuria.at',
     password: 'member123',
-    role: 'member',
+    role: 'member' as const,
     firstName: 'Peter',
     lastName: 'Schmidt',
     couleurname: 'Petrus',
@@ -68,7 +68,7 @@ const members = [
   {
     email: 'guest@mercuria.at',
     password: 'guest123',
-    role: 'member',
+    role: 'member' as const,
     firstName: 'Gast',
     lastName: 'Besucher',
     couleurname: 'Visitor',
