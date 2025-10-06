@@ -1,11 +1,12 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: Inter, sans-serif;
+  --font-sans: Plus Jakarta Sans, sans-serif;
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -80,8 +81,8 @@
   --sidebar-ring: oklch(0.540 0.220 28.865);
   --shadow-color: oklch(1.000 0.000 0.000);
   --sidebar-background: oklch(1.000 0.000 0.000);
-  --font-sans: Inter, sans-serif;
-  --font-serif: Abhaya Libre, serif;
+  --font-sans: 'Lato', sans-serif;
+  --font-serif: 'Plus Jakarta Sans', sans-serif;
 }
 
 .dark {
@@ -121,38 +122,38 @@
 
 @layer base {
   .heading-xl {
-    font-family: Inter;
+    font-family: Plus Jakarta Sans;
   }
 
   .heading-lg {
-    font-family: Inter;
+    font-family: Plus Jakarta Sans;
   }
 
   .heading-md {
-    font-family: Inter;
+    font-family: Plus Jakarta Sans;
   }
 
   .heading-sm {
-    font-family: Inter;
+    font-family: Plus Jakarta Sans;
   }
 
 }
 
 @media screen and (max-width: 80rem) {
   .heading-xl {
-    font-family: Inter;
+    font-family: Plus Jakarta Sans;
   }
 
   .heading-lg {
-    font-family: Inter;
+    font-family: Plus Jakarta Sans;
   }
 
   .heading-md {
-    font-family: Inter;
+    font-family: Plus Jakarta Sans;
   }
 
   .heading-sm {
-    font-family: Inter;
+    font-family: Plus Jakarta Sans;
   }
 
 }
