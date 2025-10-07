@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import Spline from '@splinetool/react-spline'
 import { signIn } from '@/app/(frontend)/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -33,7 +33,7 @@ export default function SignIn() {
   return (
     <div className="h-screen flex lg:flex-row flex-col">
       {/* Left side - Sign in form */}
-      <div className="bg-background flex-1 h-screen flex flex-col items-center justify-center px-6 py-24 relative">
+      <div className="bg-background flex-1 h-screen flex flex-col items-start justify-center px-16 py-24 relative">
         {/* Logo positioned at top left */}
         <div className="absolute top-4 left-4 lg:top-6 lg:left-6">
           <Logo size={36} />
@@ -42,8 +42,10 @@ export default function SignIn() {
         {/* Sign in form */}
         <form onSubmit={handleSubmit} className="w-full max-w-sm flex flex-col gap-6">
           {/* Header */}
-          <div className="flex flex-col gap-2 text-center">
-            <h1 className="text-3xl font-bold leading-9 text-card-foreground">Auf geht's!</h1>
+          <div className="flex flex-col gap-2 text-left">
+            <h1 className="text-8xl mb-6 font-bold tracking-tight text-card-foreground">
+              Auf geht's!
+            </h1>
             <p className="text-sm leading-5 text-muted-foreground">
               Paragraph 11: Porro bibitur! Melde dich an, um eine Bar Session zu starten.
             </p>
@@ -99,15 +101,9 @@ export default function SignIn() {
         </form>
       </div>
 
-      {/* Right side - Image (hidden on mobile, visible on lg) */}
-      <div className="hidden lg:block flex-1 h-screen relative bg-muted">
-        <Image
-          src="/signin-background.jpg"
-          alt="Sign in background"
-          fill
-          className="object-cover opacity-20"
-          priority
-        />
+      {/* Right side - Spline 3D Scene (hidden on mobile, visible on lg) */}
+      <div className="hidden lg:block flex-1 h-screen relative">
+        <Spline scene="https://prod.spline.design/UCtM2OWabQ6qG4bJ/scene.splinecode" />
       </div>
     </div>
   )
