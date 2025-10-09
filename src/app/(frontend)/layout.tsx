@@ -11,7 +11,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="de" suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="/api/theme" />
-        <script
+        {/* <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               })();
             `,
           }}
-        />
+        /> */}
       </head>
       <body className="text-foreground antialiased">
         <Navbar />

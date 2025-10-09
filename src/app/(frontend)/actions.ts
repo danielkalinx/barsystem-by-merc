@@ -17,7 +17,19 @@ export async function getCurrentUser() {
 
     // Verify token and get user
     const { user } = await payload.auth({ headers: new Headers({ cookie: `payload-token=${token}` }) })
-    return user
+
+    if (!user) {
+      return null
+    }
+
+    // Fetch user again with populated rank to get colors
+    const fullUser = await payload.findByID({
+      collection: 'members',
+      id: user.id,
+      depth: 1, // Populate rank with colors
+    })
+
+    return fullUser
   } catch (error) {
     console.error('Error getting current user:', error)
     return null

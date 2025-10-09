@@ -1,27 +1,11 @@
-'use client'
-
-import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import type { Member } from '@/payload-types'
 
-const Avatar: React.FC = () => {
-  const [user, setUser] = useState<Member | null>(null)
+interface UserAvatarProps {
+  user: Member
+}
 
-  useEffect(() => {
-    fetch('/api/members/me')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data) {
-          setUser(data)
-        }
-      })
-      .catch((err) => {
-        console.error('Failed to fetch user:', err)
-      })
-  }, [])
-
-  if (!user) return null
-
+export function UserAvatar({ user }: UserAvatarProps) {
   const profilePicture = user.profilePicture
   const hasProfilePicture =
     profilePicture && typeof profilePicture === 'object' && 'url' in profilePicture
@@ -81,5 +65,3 @@ const Avatar: React.FC = () => {
     </div>
   )
 }
-
-export { Avatar }

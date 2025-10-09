@@ -187,7 +187,7 @@ export interface Member {
   /**
    * Rang des Mitglieds - bitte aus Ränge-Sammlung auswählen
    */
-  rank?: (string | null) | Rank;
+  rank: string | Rank;
   /**
    * Wird automatisch bei Bestellungen und Zahlungen aktualisiert
    */
