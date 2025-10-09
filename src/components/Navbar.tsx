@@ -37,7 +37,7 @@ export function Navbar() {
       transition={{ duration: 0.4, ease: 'easeOut' }}
     >
       <div className="container mx-auto py-3">
-        <div className="flex h-16 items-center justify-between rounded-full border border-border/70 bg-background/80 px-6 backdrop-blur-md">
+        <div className="flex h-16 items-center justify-between rounded-full border border-border/20 bg-background/95 px-6 backdrop-blur-md">
           <Link
             href="/"
             className="flex items-center gap-3 text-base font-semibold text-foreground transition hover:opacity-80"
