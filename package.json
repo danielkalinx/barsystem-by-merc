@@ -36,11 +36,12 @@
     "@radix-ui/react-scroll-area": "^1.2.10",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.3",
-    "@splinetool/react-spline": "^4.1.0",
-    "@splinetool/runtime": "^1.10.76",
+    "@react-three/drei": "^10.7.6",
+    "@react-three/fiber": "^9.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
+    "culori": "^4.0.2",
     "dotenv": "16.4.7",
     "graphql": "^16.8.1",
     "lucide-react": "^0.544.0",
@@ -50,7 +51,8 @@
     "react-dom": "19.1.0",
     "sharp": "0.34.2",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "three": "^0.180.0"
   },
   "devDependencies": {
     "@playwright/test": "1.54.1",
