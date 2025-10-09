@@ -1,11 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { signIn } from '@/app/(frontend)/actions'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
@@ -16,6 +14,13 @@ export default function SignIn() {
   const [keepSignedIn, setKeepSignedIn] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    document.body.classList.add('no-navbar')
+    return () => {
+      document.body.classList.remove('no-navbar')
+    }
+  }, [])
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -33,156 +38,100 @@ export default function SignIn() {
   }
 
   return (
-    <div className="relative grid min-h-screen gap-12 overflow-hidden bg-gradient-to-br from-background via-background to-muted/30 lg:grid-cols-2">
-      <div className="absolute inset-y-0 right-1/2 hidden w-1/2 translate-x-1/3 rounded-full bg-primary/5 blur-3xl lg:block" />
+    <div className="relative flex min-h-screen overflow-x-clip">
+      <div className="absolute -right-1/4 top-0 hidden h-full w-[150%] bg-[radial-gradient(circle_at_50%_35%,rgba(255,122,122,0.45),transparent_60%),radial-gradient(circle_at_65%_65%,rgba(255,180,180,0.3),transparent_65%)] lg:block" />
 
-      <div className="relative flex items-center justify-center px-6 py-12 sm:px-10 lg:py-24">
+      <div className="relative z-10 flex w-full flex-col justify-center px-6 py-16 sm:px-12 lg:w-1/2 lg:pl-24 xl:pl-32">
         <motion.div
-          className="w-full max-w-lg"
+          className="w-full max-w-sm space-y-8"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
         >
-          <div className="mb-8 flex items-center gap-3">
-            <span className="inline-flex size-12 items-center justify-center rounded-full border border-border/60 bg-muted/30">
-              <Image
-                src="/images/merc-logo.png"
-                alt="Merc Logo"
-                width={32}
-                height={32}
-                className="object-contain"
-              />
-            </span>
-            <div>
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                K.Ö.H.V. Mercuria
-              </p>
-              <h2 className="text-lg font-semibold text-foreground">Bar Management Portal</h2>
-            </div>
+          <div className="space-y-2">
+            <h1 className="text-3xl font-semibold tracking-tight text-foreground">Login MercID</h1>
+            <p className="text-base text-muted-foreground">
+              Logge dich ein, um personalisierte Inhalte freizuschalten und mit deiner Community
+              verbunden zu bleiben.
+            </p>
           </div>
 
-          <Card className="p-8">
-            <CardHeader className="space-y-2 pb-6">
-              <CardTitle className="text-3xl font-semibold">Login MercID</CardTitle>
-              <CardDescription>
-                Melde dich an, um deine Bar-Sitzungen zu verwalten und verbunden zu bleiben.
-              </CardDescription>
-            </CardHeader>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <Input
+              id="email"
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+              disabled={isLoading}
+            />
 
-            <Separator className="bg-border/60" />
+            <Input
+              id="password"
+              type="password"
+              placeholder="Passwort"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              disabled={isLoading}
+            />
 
-            <CardContent className="space-y-6 pt-6">
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium text-muted-foreground">
-                    E-Mail Adresse
-                  </label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="du@mercuria.at"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label htmlFor="password" className="text-sm font-medium text-muted-foreground">
-                      Passwort
-                    </label>
-                    <button
-                      type="button"
-                      className="text-xs font-medium text-primary transition hover:text-primary/80"
-                      disabled={isLoading}
-                    >
-                      Passwort vergessen?
-                    </button>
-                  </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between gap-3 rounded-lg border border-dashed border-border/60 px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id="keep-signed-in"
-                      checked={keepSignedIn}
-                      onCheckedChange={(value) => setKeepSignedIn(value === true)}
-                      disabled={isLoading}
-                    />
-                    <label
-                      htmlFor="keep-signed-in"
-                      className="text-sm font-medium leading-none text-foreground"
-                    >
-                      Angemeldet bleiben
-                    </label>
-                  </div>
-                  <span className="hidden text-xs text-muted-foreground sm:inline">
-                    Sicher auf persönlichen Geräten
-                  </span>
-                </div>
-
-                {error && (
-                  <motion.p
-                    className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive"
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    {error}
-                  </motion.p>
-                )}
-
-                <Button
-                  type="submit"
+            <div className="flex items-center justify-between text-base text-muted-foreground">
+              <label className="flex items-center gap-2">
+                <Checkbox
+                  id="keep-signed-in"
+                  checked={keepSignedIn}
+                  onCheckedChange={(value) => setKeepSignedIn(value === true)}
                   disabled={isLoading}
-                  className="w-full justify-center rounded-full text-sm font-semibold"
-                >
-                  {isLoading ? 'Wird angemeldet...' : 'Anmelden'}
-                </Button>
-              </form>
+                  className="rounded-[6px] border border-muted-foreground/30 data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                />
+                Angemeldet bleiben
+              </label>
+              <button
+                type="button"
+                className="text-sm font-medium text-primary underline-offset-4 transition hover:underline"
+                disabled={isLoading}
+              >
+                Passwort vergessen?
+              </button>
+            </div>
 
-              <Separator className="bg-border/60" />
+            {error && (
+              <motion.p
+                className="rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-base font-medium text-destructive"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                {error}
+              </motion.p>
+            )}
 
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>Neu im System? Schreib uns eine Mail.</span>
-                <button
-                  type="button"
-                  className="font-semibold text-primary underline-offset-4 transition hover:text-primary/80 hover:underline"
-                >
-                  kontakt@mercuria.at
-                </button>
-              </div>
-            </CardContent>
-          </Card>
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="h-12 w-full justify-center rounded-full bg-primary text-primary-foreground text-base font-semibold transition hover:bg-primary/90"
+            >
+              {isLoading ? 'Wird angemeldet...' : 'Anmelden'}
+            </Button>
+          </form>
+
+          <Separator />
+
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>Neu im System?</span>
+            <button
+              type="button"
+              className="font-semibold text-primary underline-offset-4 transition hover:underline"
+            >
+              kontakt@mercuria.at
+            </button>
+          </div>
         </motion.div>
       </div>
 
-      <div className="relative hidden min-h-screen lg:block">
-        <motion.div
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          <Image
-            src="/images/signin-background.png"
-            alt="Background"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-tr from-background/60 via-background/20 to-transparent" />
-        </motion.div>
+      <div className="relative hidden min-h-screen flex-1 lg:block">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,160,160,0.35),transparent_65%)]" />
       </div>
     </div>
   )
