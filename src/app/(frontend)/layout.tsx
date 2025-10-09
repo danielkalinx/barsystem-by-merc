@@ -1,4 +1,5 @@
 import './styles.css'
+import { Navbar } from '@/components/Navbar'
 
 export const metadata = {
   title: 'Bar Management System',
@@ -9,7 +10,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de" suppressHydrationWarning>
       <head></head>
-      <body className="bg-background text-foreground antialiased">{children}</body>
+      <body className="bg-gradient-to-br from-background via-background to-muted/20 text-foreground antialiased">
+        <Navbar />
+        <main className="container py-12 lg:py-16">{children}</main>
+      </body>
     </html>
   )
 }

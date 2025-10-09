@@ -3,6 +3,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { cookies } from 'next/headers'
+import type { Member, Product, Session } from '@/payload-types'
 
 export async function getCurrentUser() {
   try {
@@ -177,6 +178,216 @@ export async function closeSession(sessionId: string) {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to close session',
+    }
+  }
+}
+
+export async function getAvailableProducts() {
+  try {
+    const payload = await getPayload({ config })
+    const products = await payload.find({
+      collection: 'products',
+      where: {
+        available: {
+          equals: true,
+        },
+      },
+      limit: 1000,
+      sort: 'name',
+    })
+
+    return products.docs as Product[]
+  } catch (error) {
+    console.error('Error getting products:', error)
+    return []
+  }
+}
+
+type OrderItemInput = {
+  productId: string
+  quantity: number
+}
+
+export async function createOrder({
+  memberId,
+  items,
+}: {
+  memberId: string
+  items: OrderItemInput[]
+}) {
+  try {
+    const currentUser = (await getCurrentUser()) as Member | null
+
+    if (!currentUser) {
+      throw new Error('Nicht eingeloggt')
+    }
+
+    if (!memberId) {
+      throw new Error('Bitte ein Mitglied auswählen')
+    }
+
+    if (!items?.length) {
+      throw new Error('Keine Produkte ausgewählt')
+    }
+
+    const payload = await getPayload({ config })
+
+    const activeSessionQuery = await payload.find({
+      collection: 'sessions',
+      where: {
+        status: {
+          equals: 'active',
+        },
+      },
+      limit: 1,
+      depth: 1,
+    })
+
+    const activeSession = activeSessionQuery.docs[0] as Session | undefined
+
+    if (!activeSession) {
+      throw new Error('Es ist keine Sitzung aktiv')
+    }
+
+    const isAdmin = currentUser.role === 'admin'
+    const isBartender =
+      activeSession.bartenders?.some((bartender) => {
+        const member = bartender.member
+        const bartenderId =
+          typeof member === 'string'
+            ? member
+            : typeof member === 'object'
+              ? member.id
+              : null
+        return bartenderId === currentUser.id
+      }) ?? false
+
+    if (!isAdmin && !isBartender) {
+      throw new Error('Keine Berechtigung zum Bestellen')
+    }
+
+    const uniqueProductIds = Array.from(new Set(items.map((item) => item.productId)))
+    const productsQuery = await payload.find({
+      collection: 'products',
+      where: {
+        id: {
+          in: uniqueProductIds,
+        },
+      },
+      limit: uniqueProductIds.length,
+    })
+
+    const productsById = new Map<string, Product>()
+    for (const product of productsQuery.docs as Product[]) {
+      productsById.set(product.id, product)
+    }
+
+    const normalizedItems = items.map((item) => {
+      const product = productsById.get(item.productId)
+
+      if (!product) {
+        throw new Error('Produkt nicht gefunden')
+      }
+
+      if (product.available === false) {
+        throw new Error(`Produkt ${product.name} ist nicht verfügbar`)
+      }
+
+      const quantity = Number.isFinite(item.quantity) ? Math.max(1, Math.floor(item.quantity)) : 1
+      const priceAtOrder = typeof product.price === 'number' ? product.price : 0
+
+      return {
+        product: product.id,
+        quantity,
+        priceAtOrder,
+        productName: product.name,
+      }
+    })
+
+    const totalAmount = normalizedItems.reduce(
+      (sum, item) => sum + item.priceAtOrder * item.quantity,
+      0,
+    )
+
+    const totalProducts = normalizedItems.reduce((sum, item) => sum + item.quantity, 0)
+
+    if (totalAmount <= 0) {
+      throw new Error('Bestellsumme muss positiv sein')
+    }
+
+    const member = await payload.findByID({
+      collection: 'members',
+      id: memberId,
+      depth: 0,
+      overrideAccess: true,
+    })
+
+    if (!member) {
+      throw new Error('Mitglied nicht gefunden')
+    }
+
+    const createdOrder = await payload.create({
+      collection: 'orders',
+      data: {
+        session: activeSession.id,
+        member: memberId,
+        bartender: currentUser.id,
+        items: normalizedItems.map(({ product, quantity, priceAtOrder }) => ({
+          product,
+          quantity,
+          priceAtOrder,
+        })),
+        totalAmount,
+        status: 'completed',
+      },
+      overrideAccess: !isAdmin,
+    })
+
+    const updatedTabBalance =
+      typeof member.tabBalance === 'number' ? member.tabBalance + totalAmount : totalAmount
+
+    await payload.update({
+      collection: 'members',
+      id: memberId,
+      data: {
+        tabBalance: updatedTabBalance,
+      },
+      overrideAccess: true,
+    })
+
+    const currentTotalRevenue =
+      typeof activeSession.totalRevenue === 'number' ? activeSession.totalRevenue : 0
+    const currentStatistics =
+      typeof activeSession.statistics === 'object' ? activeSession.statistics : null
+    const totalProductsSold = currentStatistics?.totalProductsSold ?? 0
+    const mostPopularProduct = currentStatistics?.mostPopularProduct
+
+    const topItem = normalizedItems.reduce((acc, item) => {
+      if (!acc || item.quantity > acc.quantity) {
+        return item
+      }
+      return acc
+    }, null as (typeof normalizedItems)[number] | null)
+
+    await payload.update({
+      collection: 'sessions',
+      id: activeSession.id,
+      data: {
+        totalRevenue: currentTotalRevenue + totalAmount,
+        statistics: {
+          totalProductsSold: totalProductsSold + totalProducts,
+          mostPopularProduct: mostPopularProduct || topItem?.productName,
+        },
+      },
+      overrideAccess: true,
+    })
+
+    return { success: true, order: createdOrder }
+  } catch (error) {
+    console.error('Error creating order:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Bestellung fehlgeschlagen',
     }
   }
 }

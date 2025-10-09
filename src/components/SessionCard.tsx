@@ -37,43 +37,45 @@ export function SessionCard({ session, currentUser }: SessionCardProps) {
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-green-500" />
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <span className="inline-flex size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
             Aktive Sitzung
           </CardTitle>
-          <Badge variant="default">Aktiv</Badge>
+          <Badge variant="default" className="px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+            Aktiv
+          </Badge>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <p className="text-muted-foreground">Gestartet</p>
-            <p className="font-medium">{formattedTime} Uhr</p>
+      <CardContent className="space-y-6">
+        <div className="grid gap-4 text-sm sm:grid-cols-2">
+          <div className="rounded-xl border border-border/60 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">Gestartet</p>
+            <p className="mt-1 text-base font-semibold text-foreground">{formattedTime} Uhr</p>
           </div>
-          <div>
-            <p className="text-muted-foreground">Umsatz heute</p>
-            <p className="font-medium">{revenue}</p>
+          <div className="rounded-xl border border-border/60 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">Umsatz heute</p>
+            <p className="mt-1 text-base font-semibold text-green-600">{revenue}</p>
           </div>
         </div>
 
-        <div>
-          <p className="text-sm text-muted-foreground mb-1">Schankwarte</p>
-          <p className="text-sm font-medium">{bartenderNames}</p>
+        <div className="rounded-xl border border-dashed border-border/60 bg-background/40 p-4">
+          <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">Schankwarte</p>
+          <p className="text-sm font-medium text-foreground">{bartenderNames}</p>
         </div>
 
-        <div className="flex gap-2 pt-2">
+        <div className="flex flex-col gap-2 pt-2 sm:flex-row">
           {isBartender && (
-            <Button asChild className="flex-1">
+            <Button asChild className="flex-1 rounded-full">
               <Link href="/prices">Zur Bestellung</Link>
             </Button>
           )}
           {isAdmin && (
-            <Button asChild variant="outline">
+            <Button asChild variant="outline" className="flex-1 rounded-full border-border/80">
               <Link href="/session">Sitzung verwalten</Link>
             </Button>
           )}
           {!isBartender && !isAdmin && (
-            <Button variant="outline" className="flex-1" disabled>
+            <Button variant="outline" className="flex-1 rounded-full border-border/80" disabled>
               Schankwart werden
             </Button>
           )}

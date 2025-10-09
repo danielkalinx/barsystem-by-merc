@@ -22,87 +22,99 @@ export async function Dashboard() {
   const colors = rank?.colors || []
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-4xl py-8 space-y-6">
-        {/* User Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {colors.length === 3 && (
-              <div className="flex h-8 w-16 border border-border overflow-hidden rounded">
-                {colors.map((colorObj, idx) => (
-                  <div
-                    key={idx}
-                    className="flex-1"
-                    style={{
-                      backgroundColor:
-                        typeof colorObj === 'object' ? colorObj.color : colorObj,
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-            <div>
-              <h1 className="text-2xl font-bold">
-                {user.couleurname || `${user.firstName} ${user.lastName}`}
-              </h1>
-              {rank && <p className="text-sm text-muted-foreground">{rank.label}</p>}
-            </div>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Kontostand</p>
-            <p className={`text-2xl font-bold ${balanceColor}`}>
-              {tabBalance > 0 ? '-' : ''}
-              {balanceFormatted}
-            </p>
-          </div>
-        </div>
-
-        {/* Active Session or Create Session */}
-        {activeSession ? (
-          <SessionCard session={activeSession} currentUser={user as Member} />
-        ) : (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-muted" />
-                  Keine aktive Sitzung
-                </CardTitle>
-                <Badge variant="secondary">Inaktiv</Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Es läuft derzeit keine Bar-Sitzung. Warte auf einen Admin, um eine Sitzung zu
-                eröffnen.
-              </p>
-
-              {user.role === 'admin' && (
-                <div className="pt-2">
-                  <CreateSessionDialog members={members as Member[]} />
+    <div className="mx-auto grid w-full max-w-6xl gap-8 lg:grid-cols-[2fr_1fr]">
+      <div className="space-y-6">
+        <Card className="p-8">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-4">
+              {colors.length === 3 && (
+                <div className="flex h-10 w-24 overflow-hidden rounded-full border border-border/60">
+                  {colors.map((colorObj, idx) => (
+                    <div
+                      key={idx}
+                      className="flex-1"
+                      style={{
+                        backgroundColor: typeof colorObj === 'object' ? colorObj.color : colorObj,
+                      }}
+                    />
+                  ))}
                 </div>
               )}
-            </CardContent>
-          </Card>
-        )}
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                  Willkommen zurück
+                </p>
+                <h1 className="text-3xl font-semibold">
+                  {user.couleurname || `${user.firstName} ${user.lastName}`}
+                </h1>
+                {rank && <p className="text-sm text-muted-foreground">{rank.label}</p>}
+              </div>
+            </div>
 
-        {/* User Stats */}
+            <div className="rounded-2xl border border-border/60 bg-background/80 px-5 py-4 text-right">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                Kontostand
+              </p>
+              <p className={`text-3xl font-semibold ${balanceColor}`}>
+                {tabBalance > 0 ? '-' : ''}
+                {balanceFormatted}
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        <section className="space-y-4">
+          {activeSession ? (
+            <SessionCard session={activeSession} currentUser={user as Member} />
+          ) : (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <span className="size-2 rounded-full bg-muted" />
+                    Keine aktive Sitzung
+                  </CardTitle>
+                  <Badge variant="secondary">Inaktiv</Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Es läuft derzeit keine Bar-Sitzung. Warte auf einen Admin, um eine Sitzung zu
+                  eröffnen.
+                </p>
+
+                {user.role === 'admin' && (
+                  <div className="pt-2">
+                    <CreateSessionDialog members={members as Member[]} />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </section>
+      </div>
+
+      <aside className="space-y-4">
         <Card>
           <CardHeader>
             <CardTitle>Deine Statistiken</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Letzter Konsum</span>
-              <span className="font-medium">Noch keine Daten</span>
+          <CardContent className="grid gap-4">
+            <div className="rounded-xl border border-border/50 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                Letzter Konsum
+              </p>
+              <p className="mt-1 text-sm font-medium text-foreground">Noch keine Daten</p>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Lieblings-Getränk</span>
-              <span className="font-medium">Noch keine Daten</span>
+            <div className="rounded-xl border border-border/50 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                Lieblings-Getränk
+              </p>
+              <p className="mt-1 text-sm font-medium text-foreground">Noch keine Daten</p>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </aside>
     </div>
   )
 }

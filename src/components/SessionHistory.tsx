@@ -8,7 +8,7 @@ interface SessionHistoryProps {
   currentUser: Member
 }
 
-export async function SessionHistory({ currentUser }: SessionHistoryProps) {
+export async function SessionHistory({ currentUser: _currentUser }: SessionHistoryProps) {
   const payload = await getPayload({ config })
 
   const sessions = await payload.find({
@@ -70,7 +70,7 @@ export async function SessionHistory({ currentUser }: SessionHistoryProps) {
             return (
               <div
                 key={session.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                className="flex items-center justify-between rounded-2xl border border-transparent bg-background/40 p-4 transition hover:border-border/50 hover:bg-background/70"
               >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">

@@ -66,9 +66,11 @@ export function CreateSessionDialog({ members }: CreateSessionDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="lg">Neue Sitzung eröffnen</Button>
+        <Button size="lg" className="rounded-full px-6">
+          Neue Sitzung eröffnen
+        </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-lg rounded-3xl border-border/70 bg-card/90 backdrop-blur">
         <DialogHeader>
           <DialogTitle>Neue Sitzung eröffnen</DialogTitle>
           <DialogDescription>
@@ -77,17 +79,20 @@ export function CreateSessionDialog({ members }: CreateSessionDialogProps) {
         </DialogHeader>
 
         <div className="py-4">
-          <Label className="text-sm font-medium mb-3 block">
+          <Label className="mb-3 block text-sm font-medium">
             Schankwarte auswählen (min. 1)
           </Label>
-          <ScrollArea className="h-80 border rounded-md p-4">
+          <ScrollArea className="h-80 rounded-2xl border border-border/60 bg-background/50 p-4">
             <div className="space-y-3">
               {members.map((member) => {
                 const rank = typeof member.rank === 'object' ? member.rank : null
                 const colors = rank?.colors || []
 
                 return (
-                  <div key={member.id} className="flex items-center space-x-3">
+                  <div
+                    key={member.id}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-transparent bg-card/80 px-4 py-3 transition hover:border-border/60 hover:bg-background/60"
+                  >
                     <Checkbox
                       id={`bartender-${member.id}`}
                       checked={selectedBartenders.has(member.id)}
@@ -95,11 +100,10 @@ export function CreateSessionDialog({ members }: CreateSessionDialogProps) {
                     />
                     <Label
                       htmlFor={`bartender-${member.id}`}
-                      className="flex items-center gap-2 cursor-pointer flex-1"
+                      className="flex flex-1 cursor-pointer items-center gap-3 text-sm"
                     >
-                      {/* Rank colors flag */}
                       {colors.length === 3 && (
-                        <div className="flex h-4 w-8 border border-border overflow-hidden">
+                        <div className="flex h-3 w-8 overflow-hidden rounded-full border border-border/60">
                           {colors.map((colorObj, idx) => (
                             <div
                               key={idx}
@@ -125,14 +129,19 @@ export function CreateSessionDialog({ members }: CreateSessionDialogProps) {
             </div>
           </ScrollArea>
 
-          {error && <p className="text-sm text-destructive mt-2">{error}</p>}
+          {error && <p className="mt-3 text-sm font-medium text-destructive">{error}</p>}
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
+          <Button
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={isLoading}
+            className="rounded-full"
+          >
             Abbrechen
           </Button>
-          <Button onClick={handleCreateSession} disabled={isLoading}>
+          <Button onClick={handleCreateSession} disabled={isLoading} className="rounded-full">
             {isLoading ? 'Wird erstellt...' : 'Sitzung aktivieren'}
           </Button>
         </DialogFooter>

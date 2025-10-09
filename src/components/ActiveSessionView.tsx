@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { motion } from 'motion/react'
+import { closeSession } from '@/app/(frontend)/actions'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { closeSession } from '@/app/(frontend)/actions'
-import type { Session, Member, Order } from '@/payload-types'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import type { Member, Session } from '@/payload-types'
 
 interface ActiveSessionViewProps {
   session: Session
@@ -38,14 +40,6 @@ export function ActiveSessionView({ session, currentUser }: ActiveSessionViewPro
       ? `€${session.totalRevenue.toFixed(2)}`
       : '€0,00'
 
-  const bartenderNames =
-    session.bartenders
-      ?.map((b) => {
-        const member = typeof b.member === 'object' ? b.member : null
-        return member?.couleurname || member?.firstName || 'Unbekannt'
-      })
-      .join(', ') || 'Keine'
-
   const handleCloseSession = async () => {
     if (!confirm('Sitzung wirklich schließen? Diese Aktion kann nicht rückgängig gemacht werden.')) {
       return
@@ -63,34 +57,41 @@ export function ActiveSessionView({ session, currentUser }: ActiveSessionViewPro
   }
 
   return (
-    <div className="space-y-4">
+    <motion.div
+      className="space-y-6"
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+    >
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <span className="inline-flex size-2 rounded-full bg-green-500 ring-4 ring-green-500/20" />
               Aktive Sitzung
             </CardTitle>
-            <Badge variant="default">Aktiv</Badge>
+            <Badge variant="default" className="px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+              Aktiv
+            </Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Gestartet</p>
-              <p className="font-medium">{formattedStartTime}</p>
+          <div className="grid gap-4 md:grid-cols-4">
+            <div className="rounded-xl border border-border/60 bg-background/50 p-4">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Gestartet</p>
+              <p className="mt-2 text-sm font-semibold">{formattedStartTime}</p>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Dauer</p>
-              <p className="font-medium">{durationText}</p>
+            <div className="rounded-xl border border-border/60 bg-background/50 p-4">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Dauer</p>
+              <p className="mt-2 text-sm font-semibold">{durationText}</p>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Umsatz</p>
-              <p className="font-medium text-green-600">{revenue}</p>
+            <div className="rounded-xl border border-border/60 bg-background/50 p-4">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Umsatz</p>
+              <p className="mt-2 text-sm font-semibold text-green-600">{revenue}</p>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Bestellungen</p>
-              <p className="font-medium">
+            <div className="rounded-xl border border-border/60 bg-background/50 p-4">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Bestellungen</p>
+              <p className="mt-2 text-sm font-semibold text-foreground">
                 {typeof session.statistics === 'object' && session.statistics?.totalProductsSold
                   ? session.statistics.totalProductsSold
                   : 0}
@@ -98,18 +99,24 @@ export function ActiveSessionView({ session, currentUser }: ActiveSessionViewPro
             </div>
           </div>
 
-          <div>
-            <p className="text-sm text-muted-foreground mb-2">Schankwarte</p>
-            <div className="flex flex-wrap gap-2">
+          <Separator className="bg-border/60" />
+
+          <div className="space-y-3">
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">Schankwarte</p>
+            <div className="flex flex-wrap gap-3">
               {session.bartenders?.map((b, idx) => {
                 const member = typeof b.member === 'object' ? b.member : null
                 const rank = member && typeof member.rank === 'object' ? member.rank : null
                 const colors = rank?.colors || []
 
                 return (
-                  <Badge key={idx} variant="outline" className="flex items-center gap-2">
+                  <Badge
+                    key={idx}
+                    variant="outline"
+                    className="flex items-center gap-2 rounded-full border-border/60 bg-background/60 px-3 py-1.5"
+                  >
                     {colors.length === 3 && (
-                      <div className="flex h-3 w-6 border border-border overflow-hidden">
+                      <div className="flex h-3 w-6 overflow-hidden rounded-full border border-border/60">
                         {colors.map((colorObj, colorIdx) => (
                           <div
                             key={colorIdx}
@@ -130,12 +137,12 @@ export function ActiveSessionView({ session, currentUser }: ActiveSessionViewPro
           </div>
 
           {isAdmin && (
-            <div className="pt-4 border-t">
+            <div className="border-t border-dashed border-border/60 pt-4">
               <Button
                 variant="destructive"
                 onClick={handleCloseSession}
                 disabled={isClosing}
-                className="w-full md:w-auto"
+                className="w-full rounded-full md:w-auto"
               >
                 {isClosing ? 'Wird geschlossen...' : 'Sitzung schließen'}
               </Button>
@@ -155,6 +162,6 @@ export function ActiveSessionView({ session, currentUser }: ActiveSessionViewPro
           </p>
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   )
 }

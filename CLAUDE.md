@@ -191,3 +191,4 @@ Copy `.env.example` to `.env` and configure values.
 - **IMPORTANT: Do NOT override ShadCN component default styles with className props** (e.g., avoid `className="h-9 rounded-md"` on Input/Button components). Only add non-conflicting classes like layout/spacing utilities. Let the base component styles (defined in `src/components/ui/`) apply by default for consistency.
 - dont start dev server unless asked
 - there no tailwind config file because this project uses tailwind v4
+- Dont use shadows as a design element. Rather turn to muted background colors to create contrast.

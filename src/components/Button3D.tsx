@@ -1,8 +1,8 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { useGLTF, OrbitControls } from '@react-three/drei'
+import { OrbitControls, useGLTF } from '@react-three/drei'
 import { parse, formatHex } from 'culori'
 import * as THREE from 'three'
 
@@ -49,7 +49,7 @@ function ButtonModel() {
 
 export default function Button3D() {
   return (
-    <div className="w-full h-full">
+    <div className="h-full w-full">
       <Canvas camera={{ position: [0, 0, 10], fov: 75 }}>
         <ambientLight intensity={0.5} />
         <directionalLight position={[5, 5, 5]} intensity={1} castShadow />
