@@ -9,7 +9,21 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de" suppressHydrationWarning>
-      <head></head>
+      <head>
+        <link rel="stylesheet" href="/api/theme" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (isDark) {
+                  document.documentElement.classList.add('dark');
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="text-foreground antialiased">
         <Navbar />
         <main className="mx-auto">{children}</main>

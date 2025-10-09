@@ -15,6 +15,7 @@ import { Products } from './collections/Products'
 import { Sessions } from './collections/Sessions'
 import { Orders } from './collections/Orders'
 import { Payments } from './collections/Payments'
+import { Settings } from './globals/Settings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -36,6 +37,7 @@ export default buildConfig({
     },
   },
   collections: [Media, Members, Ranks, Products, Sessions, Orders, Payments],
+  globals: [Settings],
   editor: lexicalEditor(),
   i18n: {
     supportedLanguages: { de },

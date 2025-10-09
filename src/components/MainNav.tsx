@@ -47,9 +47,9 @@ export function MainNav() {
               <NavigationMenuLink asChild active={isActive}>
                 <Link
                   href={item.href}
-                  className={`${navigationMenuTriggerStyle()} h-10 rounded-full border border-transparent bg-transparent px-4 text-sm font-medium text-muted-foreground transition data-[active=true]:border-border data-[active=true]:bg-primary/10 data-[active=true]:text-foreground hover:border-border hover:bg-muted/60`}
+                  className={`${navigationMenuTriggerStyle()} h-10 rounded-full px-4 text-base font-medium transition data-[active=true]:bg-primary data-[active=true]:text-primary-foreground hover:bg-muted`}
                 >
-                  <Icon className="mr-2 h-4 w-4" />
+                  <Icon className="mr-2 size-4" />
                   {item.title}
                 </Link>
               </NavigationMenuLink>

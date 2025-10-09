@@ -31,7 +31,7 @@ export default function SignIn() {
   }
 
   return (
-    <div className="relative flex min-h-screen">
+    <div className="relative flex h-screen">
       <div className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-16 sm:px-12 lg:w-1/2">
         <motion.div
           className="w-full max-w-sm space-y-8"
