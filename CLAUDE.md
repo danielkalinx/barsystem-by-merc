@@ -189,3 +189,5 @@ Copy `.env.example` to `.env` and configure values.
 - **IMPORTANT: Always use standard Tailwind classes instead of arbitrary values** (e.g., use `text-3xl` instead of `text-[30px]`, `max-w-sm` instead of `max-w-[360px]`). Only use arbitrary values when absolutely necessary for exact design requirements.
 - Memorize to always use the Tailwind CSS variables from styles.css if possible. Check every time when creating Tailwind classes.
 - **IMPORTANT: Do NOT override ShadCN component default styles with className props** (e.g., avoid `className="h-9 rounded-md"` on Input/Button components). Only add non-conflicting classes like layout/spacing utilities. Let the base component styles (defined in `src/components/ui/`) apply by default for consistency.
+- dont start dev server unless asked
+- there no tailwind config file because this project uses tailwind v4

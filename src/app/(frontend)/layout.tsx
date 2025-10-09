@@ -8,17 +8,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.classList.add('dark')
-              }
-            `,
-          }}
-        />
-      </head>
+      <head></head>
       <body className="bg-background text-foreground antialiased">{children}</body>
     </html>
   )
