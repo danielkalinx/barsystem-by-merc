@@ -19,36 +19,20 @@ export async function Dashboard() {
   const balanceColor = tabBalance <= 0 ? 'text-green-600' : 'text-red-600'
 
   const rank = typeof user.rank === 'object' ? user.rank : null
-  const colors = rank?.colors || []
 
   return (
     <div className="container mx-auto px-6 pt-32 grid gap-8 lg:grid-cols-[2fr_1fr]">
       <div className="space-y-6">
         <Card className="p-8">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-4">
-              {colors.length === 3 && (
-                <div className="flex h-10 w-24 overflow-hidden rounded-full border border-border/60">
-                  {colors.map((colorObj, idx) => (
-                    <div
-                      key={idx}
-                      className="flex-1"
-                      style={{
-                        backgroundColor: typeof colorObj === 'object' ? colorObj.color : colorObj,
-                      }}
-                    />
-                  ))}
-                </div>
-              )}
-              <div>
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Willkommen zurück
-                </p>
-                <h1 className="text-3xl font-semibold">
-                  {user.couleurname || `${user.firstName} ${user.lastName}`}
-                </h1>
-                {rank && <p className="text-sm text-muted-foreground">{rank.label}</p>}
-              </div>
+            <div>
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">
+                Willkommen zurück
+              </p>
+              <h1 className="text-3xl font-semibold">
+                {user.couleurname || `${user.firstName} ${user.lastName}`}
+              </h1>
+              {rank && <p className="text-sm text-muted-foreground">{rank.label}</p>}
             </div>
 
             <div className="rounded-2xl border border-border/60 bg-background/80 px-5 py-4 text-right">

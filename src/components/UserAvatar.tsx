@@ -17,44 +17,28 @@ export function UserAvatar({ user }: UserAvatarProps) {
   const rank = typeof user.rank === 'object' ? user.rank : null
   const colors = rank?.colors || []
 
-  if (hasProfilePicture) {
-    return (
-      <div className="relative size-8">
+  return (
+    <div className="relative size-8 overflow-clip rounded-full border border-border">
+      {hasProfilePicture ? (
         <Image
           src={profilePicture.url || ''}
           alt={`${user.couleurname || 'User'} avatar`}
           width={32}
           height={32}
-          className="size-8 rounded-full border border-border object-cover"
+          className="size-8 rounded-full object-cover"
         />
-        {colors.length === 3 && (
-          <div className="absolute bottom-0 left-0 right-0 flex h-1 overflow-hidden rounded-b-full">
-            {colors.map((colorObj, idx) => (
-              <div
-                key={idx}
-                className="flex-1"
-                style={{
-                  backgroundColor: typeof colorObj === 'object' ? colorObj.color : colorObj,
-                }}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    )
-  }
+      ) : (
+        <div className="flex size-8 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
+          {initials}
+        </div>
+      )}
 
-  return (
-    <div className="relative size-8">
-      <div className="flex size-8 items-center justify-center rounded-full border border-border bg-muted text-xs font-semibold text-muted-foreground">
-        {initials}
-      </div>
       {colors.length === 3 && (
-        <div className="absolute bottom-0 left-0 right-0 flex h-1 overflow-hidden rounded-b-full">
+        <div className="absolute bottom-0 flex w-8 -rotate-45 flex-col">
           {colors.map((colorObj, idx) => (
             <div
               key={idx}
-              className="flex-1"
+              className="h-0.5 w-12"
               style={{
                 backgroundColor: typeof colorObj === 'object' ? colorObj.color : colorObj,
               }}
