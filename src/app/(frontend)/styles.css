@@ -187,4 +187,12 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  body.no-navbar header {
+    @apply hidden;
+  }
+
+  body.no-navbar main {
+    @apply p-0 w-full max-w-none mx-0;
+  }
 }

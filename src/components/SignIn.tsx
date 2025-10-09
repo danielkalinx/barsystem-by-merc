@@ -15,13 +15,6 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    document.body.classList.add('no-navbar')
-    return () => {
-      document.body.classList.remove('no-navbar')
-    }
-  }, [])
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     setIsLoading(true)
@@ -38,10 +31,8 @@ export default function SignIn() {
   }
 
   return (
-    <div className="relative flex min-h-screen overflow-x-clip">
-      <div className="absolute -right-1/4 top-0 hidden h-full w-[150%] bg-[radial-gradient(circle_at_50%_35%,rgba(255,122,122,0.45),transparent_60%),radial-gradient(circle_at_65%_65%,rgba(255,180,180,0.3),transparent_65%)] lg:block" />
-
-      <div className="relative z-10 flex w-full flex-col justify-center px-6 py-16 sm:px-12 lg:w-1/2 lg:pl-24 xl:pl-32">
+    <div className="relative flex min-h-screen">
+      <div className="relative z-10 flex w-full flex-col items-center justify-center px-6 py-16 sm:px-12 lg:w-1/2">
         <motion.div
           className="w-full max-w-sm space-y-8"
           initial={{ opacity: 0, y: 24 }}
@@ -82,19 +73,18 @@ export default function SignIn() {
                 <Checkbox
                   id="keep-signed-in"
                   checked={keepSignedIn}
-                  onCheckedChange={(value) => setKeepSignedIn(value === true)}
+                  onCheckedChange={(value: boolean) => setKeepSignedIn(value === true)}
                   disabled={isLoading}
                   className="rounded-[6px] border border-muted-foreground/30 data-[state=checked]:border-primary data-[state=checked]:bg-primary"
                 />
                 Angemeldet bleiben
               </label>
-              <button
-                type="button"
+              <a
+                href="/forgot-password"
                 className="text-sm font-medium text-primary underline-offset-4 transition hover:underline"
-                disabled={isLoading}
               >
                 Passwort vergessen?
-              </button>
+              </a>
             </div>
 
             {error && (
@@ -107,11 +97,7 @@ export default function SignIn() {
               </motion.p>
             )}
 
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="h-12 w-full justify-center rounded-full bg-primary text-primary-foreground text-base font-semibold transition hover:bg-primary/90"
-            >
+            <Button type="submit" disabled={isLoading} size="lg" className="w-full">
               {isLoading ? 'Wird angemeldet...' : 'Anmelden'}
             </Button>
           </form>
@@ -120,19 +106,17 @@ export default function SignIn() {
 
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>Neu im System?</span>
-            <button
-              type="button"
+            <a
+              href="mailto:kontakt@mercuria.at"
               className="font-semibold text-primary underline-offset-4 transition hover:underline"
             >
               kontakt@mercuria.at
-            </button>
+            </a>
           </div>
         </motion.div>
       </div>
 
-      <div className="relative hidden min-h-screen flex-1 lg:block">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,160,160,0.35),transparent_65%)]" />
-      </div>
+      <div className="relative hidden min-h-screen flex-1 lg:block"></div>
     </div>
   )
 }

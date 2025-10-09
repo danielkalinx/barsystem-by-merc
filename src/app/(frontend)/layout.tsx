@@ -10,9 +10,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de" suppressHydrationWarning>
       <head></head>
-      <body className="bg-gradient-to-br from-background via-background to-muted/20 text-foreground antialiased">
+      <body className="text-foreground antialiased">
         <Navbar />
-        <main className="container py-12 lg:py-16">{children}</main>
+        <main className="mx-auto">{children}</main>
       </body>
     </html>
   )
