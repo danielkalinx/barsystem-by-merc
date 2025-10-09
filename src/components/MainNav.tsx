@@ -2,14 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Beer, Users, ListOrdered } from 'lucide-react'
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle,
-} from '@/components/ui/navigation-menu'
 
 export function MainNav() {
   const pathname = usePathname()
@@ -18,45 +10,34 @@ export function MainNav() {
     {
       title: 'Preisliste',
       href: '/prices',
-      icon: ListOrdered,
-      description: 'Getränke & Toast bestellen',
     },
     {
       title: 'Sitzung',
       href: '/session',
-      icon: Beer,
-      description: 'Aktuelle & vergangene Sitzungen',
     },
     {
       title: 'Mitglieder',
       href: '/members',
-      icon: Users,
-      description: 'Zechen & Profile',
     },
   ]
 
   return (
-    <NavigationMenu>
-      <NavigationMenuList>
-        {navItems.map((item) => {
-          const Icon = item.icon
-          const isActive = pathname === item.href
+    <nav className="flex items-center gap-6">
+      {navItems.map((item) => {
+        const isActive = pathname === item.href
 
-          return (
-            <NavigationMenuItem key={item.href}>
-              <NavigationMenuLink asChild active={isActive}>
-                <Link
-                  href={item.href}
-                  className={`${navigationMenuTriggerStyle()} h-10 rounded-full px-4 text-base font-medium transition data-[active=true]:bg-primary data-[active=true]:text-primary-foreground hover:bg-muted`}
-                >
-                  <Icon className="mr-2 size-4" />
-                  {item.title}
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          )
-        })}
-      </NavigationMenuList>
-    </NavigationMenu>
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`text-sm font-medium transition-colors hover:text-foreground ${
+              isActive ? 'text-foreground' : 'text-muted-foreground'
+            }`}
+          >
+            {item.title}
+          </Link>
+        )
+      })}
+    </nav>
   )
 }

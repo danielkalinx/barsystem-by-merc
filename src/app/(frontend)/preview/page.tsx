@@ -4,7 +4,7 @@ import { Plus, Trash2, Settings } from 'lucide-react'
 
 export default function PreviewPage() {
   return (
-    <div className="container mx-auto p-8 space-y-12">
+    <div className="container mx-auto px-6 pt-32 space-y-12">
       <div>
         <h1 className="text-4xl font-bold mb-2">Component Preview</h1>
         <p className="text-muted-foreground">Testing ground for UI components</p>

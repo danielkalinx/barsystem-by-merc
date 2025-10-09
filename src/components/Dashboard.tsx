@@ -22,7 +22,7 @@ export async function Dashboard() {
   const colors = rank?.colors || []
 
   return (
-    <div className="mx-auto grid w-full max-w-6xl gap-8 px-6 pt-32 lg:grid-cols-[2fr_1fr]">
+    <div className="container mx-auto px-6 pt-32 grid gap-8 lg:grid-cols-[2fr_1fr]">
       <div className="space-y-6">
         <Card className="p-8">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
