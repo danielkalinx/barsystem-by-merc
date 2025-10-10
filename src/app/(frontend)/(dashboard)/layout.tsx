@@ -1,13 +1,13 @@
 import { AppSidebar } from '@/components/AppSidebar'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
-import { MobileNav } from '@/components/MobileNav'
+import { SidebarMobile } from '@/components/SidebarMobile'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <MobileNav />
+        <SidebarMobile />
         <main>{children}</main>
       </SidebarInset>
     </SidebarProvider>

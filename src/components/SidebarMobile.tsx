@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'motion/react'
 import { NAV_ITEMS } from '@/lib/navigation'
 import { useEffect, useState } from 'react'
 
-export function MobileNav() {
+export function SidebarMobile() {
   const pathname = usePathname()
   const [isScrolled, setIsScrolled] = useState(false)
   const [showFloating, setShowFloating] = useState(false)
@@ -68,19 +68,19 @@ export function MobileNav() {
   return (
     <>
       {/* Static Navigation (always visible, scrolls with content) */}
-      <nav className="absolute left-0 right-0 top-0 lg:hidden">
+      <header className="absolute top-0 z-50 w-full lg:hidden">
         <div className="container mx-auto px-6 pt-6">
           <div className="flex items-center gap-2 overflow-x-auto">
             <NavContent />
           </div>
         </div>
-      </nav>
+      </header>
 
       {/* Floating Navigation (shows on scroll up) */}
       <AnimatePresence>
         {showFloating && (
-          <motion.nav
-            className="fixed left-0 right-0 top-0 z-50 lg:hidden"
+          <motion.header
+            className="fixed top-0 z-50 w-full lg:hidden"
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -16 }}
@@ -93,7 +93,7 @@ export function MobileNav() {
                 <NavContent />
               </div>
             </div>
-          </motion.nav>
+          </motion.header>
         )}
       </AnimatePresence>
     </>

@@ -37,7 +37,7 @@ The app uses Next.js App Router with **route groups** to separate concerns:
 src/app/
 ├── (frontend)/                    # Frontend application
 │   ├── (dashboard)/               # Dashboard route group - Sidebar navigation
-│   │   ├── layout.tsx            # Sidebar + MobileNav layout
+│   │   ├── layout.tsx            # AppSidebar (desktop) + SidebarMobile (mobile) layout
 │   │   └── page.tsx              # Dashboard home (/)
 │   ├── (pages)/                   # Pages route group - Navbar navigation
 │   │   ├── layout.tsx            # Navbar layout (desktop & mobile)
@@ -56,14 +56,14 @@ src/app/
 ```
 
 **Navigation Strategy:**
-- **Dashboard group** (`(dashboard)/`): Only `/` - Uses Sidebar (desktop) + MobileNav (mobile)
+- **Dashboard group** (`(dashboard)/`): Only `/` - Uses AppSidebar (desktop) + SidebarMobile (mobile)
 - **Pages group** (`(pages)/`): All other pages - Uses Navbar (desktop & mobile, same design)
 - **Shared navigation constants**: `src/lib/navigation.ts` - Single source of truth for nav items
 - **No pathname-based conditionals**: Layouts control which navigation appears, not components
 
 **Navigation Components:**
 - `src/components/AppSidebar.tsx` - Desktop sidebar for dashboard
-- `src/components/MobileNav.tsx` - Mobile floating pills for dashboard
+- `src/components/SidebarMobile.tsx` - Mobile floating pills navigation for dashboard (counterpart to desktop sidebar)
 - `src/components/Navbar.tsx` - Old navbar design for all pages (desktop & mobile)
 - `src/lib/navigation.ts` - Shared NAV_ITEMS constant (avoid duplication)
 
