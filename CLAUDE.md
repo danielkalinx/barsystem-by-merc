@@ -216,3 +216,4 @@ Copy `.env.example` to `.env` and configure values.
 - there no tailwind config file because this project uses tailwind v4
 - Dont use shadows as a design element. Rather turn to muted background colors to create contrast.
 - add sublte aniamtion with "motion" from motion.dev
+- website ist pwa ready
