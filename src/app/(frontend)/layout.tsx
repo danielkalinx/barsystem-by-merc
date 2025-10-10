@@ -1,8 +1,32 @@
+import type { Metadata, Viewport } from 'next'
+import { PWAInstaller } from '@/components/PWAInstaller'
 import './styles.css'
 
-export const metadata = {
-  title: 'Bar Management System',
-  description: 'K.Ö.H.V. Mercuria Bar Management',
+export const metadata: Metadata = {
+  title: 'Merc Barsystem',
+  description: 'Bar-Verwaltungssystem für K.Ö.H.V. Mercuria',
+  applicationName: 'Merc Barsystem',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Merc Bar',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  manifest: '/manifest.webmanifest',
+  icons: {
+    icon: '/icon-192x192.png',
+    apple: '/apple-touch-icon.png',
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#E10909',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -23,7 +47,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <PWAInstaller />
+        {children}
+      </body>
     </html>
   )
 }
