@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#f0f0f0' }, // matches --secondary: oklch(0.940 0.000 0.000)
-    { media: '(prefers-color-scheme: dark)', color: '#2d2d2d' }, // matches --secondary: oklch(0.348 0.000 0.000)
+    { media: '(prefers-color-scheme: dark)', color: '#000' }, // matches --secondary: oklch(0.348 0.000 0.000)
   ],
   width: 'device-width',
   initialScale: 1,
@@ -36,16 +36,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de" suppressHydrationWarning>
       <head>
-        <meta
-          name="theme-color"
-          content="#f0f0f0"
-          media="(prefers-color-scheme: light)"
-        />
-        <meta
-          name="theme-color"
-          content="#2d2d2d"
-          media="(prefers-color-scheme: dark)"
-        />
+        <meta name="theme-color" content="#f0f0f0" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#2d2d2d" media="(prefers-color-scheme: dark)" />
         <link rel="stylesheet" href="/api/theme" />
         <script
           dangerouslySetInnerHTML={{
