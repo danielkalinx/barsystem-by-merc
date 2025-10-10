@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   applicationName: 'Merc Barsystem',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'Merc Bar',
   },
   formatDetection: {
@@ -23,8 +23,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#1a1a1a' },
+    { media: '(prefers-color-scheme: light)', color: '#f0f0f0' }, // matches --secondary: oklch(0.940 0.000 0.000)
+    { media: '(prefers-color-scheme: dark)', color: '#2d2d2d' }, // matches --secondary: oklch(0.348 0.000 0.000)
   ],
   width: 'device-width',
   initialScale: 1,

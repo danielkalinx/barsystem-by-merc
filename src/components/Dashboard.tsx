@@ -21,10 +21,9 @@ export async function Dashboard() {
   const rank = typeof user.rank === 'object' ? user.rank : null
 
   return (
-    <div className="relative min-h-screen bg-secondary">
-      <div className="container relative mx-auto px-6 pb-10 pt-32 lg:pt-10">
-        <div className="grid gap-10 lg:grid-cols-[2fr_1fr]">
-          <div className="space-y-8">
+    <div className="container mx-auto px-6 pb-10">
+      <div className="grid gap-10 lg:grid-cols-[2fr_1fr]">
+        <div className="space-y-8">
             <Card>
               <CardContent className="space-y-8">
                 <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
@@ -122,6 +121,5 @@ export async function Dashboard() {
           </aside>
         </div>
       </div>
-    </div>
   )
 }

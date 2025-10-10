@@ -6,9 +6,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="pt-32 lg:pt-10">
         <SidebarMobile />
-        <main>{children}</main>
+        {children}
       </SidebarInset>
     </SidebarProvider>
   )

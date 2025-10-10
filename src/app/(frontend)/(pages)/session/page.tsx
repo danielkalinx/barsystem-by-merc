@@ -17,7 +17,7 @@ export default async function SessionPage() {
   }
 
   return (
-    <div className="container mx-auto px-6 pb-10 pt-32 lg:pt-10 space-y-8">
+    <div className="container mx-auto px-6 pb-10 space-y-8">
       <Card>
         <CardContent className="space-y-2">
           <h1 className="text-3xl font-semibold">Sitzungen</h1>

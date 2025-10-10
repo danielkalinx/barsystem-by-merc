@@ -4,7 +4,7 @@ export default function PagesLayout({ children }: { children: React.ReactNode })
   return (
     <>
       <Navbar />
-      <main>{children}</main>
+      <main className="min-h-screen pt-32 lg:pt-10">{children}</main>
     </>
   )
 }
