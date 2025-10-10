@@ -16,89 +16,112 @@ export async function Dashboard() {
 
   const tabBalance = typeof user.tabBalance === 'number' ? user.tabBalance : 0
   const balanceFormatted = `€${Math.abs(tabBalance).toFixed(2)}`
-  const balanceColor = tabBalance <= 0 ? 'text-green-600' : 'text-red-600'
+  const balanceColor = tabBalance <= 0 ? 'text-primary' : 'text-destructive'
 
   const rank = typeof user.rank === 'object' ? user.rank : null
 
   return (
-    <div className="container mx-auto px-6 pt-32 grid gap-8 lg:grid-cols-[2fr_1fr]">
-      <div className="space-y-6">
-        <Card className="p-8">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                Willkommen zurück
-              </p>
-              <h1 className="text-3xl font-semibold">
-                {user.couleurname || `${user.firstName} ${user.lastName}`}
-              </h1>
-              {rank && <p className="text-sm text-muted-foreground">{rank.label}</p>}
-            </div>
-
-            <div className="rounded-2xl border border-border/60 bg-background/80 px-5 py-4 text-right">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Kontostand
-              </p>
-              <p className={`text-3xl font-semibold ${balanceColor}`}>
-                {tabBalance > 0 ? '-' : ''}
-                {balanceFormatted}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        <section className="space-y-4">
-          {activeSession ? (
-            <SessionCard session={activeSession} currentUser={user as Member} />
-          ) : (
+    <div className="relative min-h-screen bg-secondary">
+      <div className="container relative mx-auto px-6 pb-20 pt-32 lg:pt-36">
+        <div className="grid gap-10 lg:grid-cols-[2fr_1fr]">
+          <div className="space-y-8">
             <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <span className="size-2 rounded-full bg-muted" />
-                    Keine aktive Sitzung
-                  </CardTitle>
-                  <Badge variant="secondary">Inaktiv</Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Es läuft derzeit keine Bar-Sitzung. Warte auf einen Admin, um eine Sitzung zu
-                  eröffnen.
-                </p>
-
-                {user.role === 'admin' && (
-                  <div className="pt-2">
-                    <CreateSessionDialog members={members as Member[]} />
+              <CardContent className="space-y-8">
+                <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="space-y-4">
+                    <CardTitle>Willkommen zurück</CardTitle>
+                    <div>
+                      <h1 className="text-4xl font-semibold sm:text-5xl">
+                        {user.couleurname || `${user.firstName} ${user.lastName}`}
+                      </h1>
+                      {rank && (
+                        <Badge variant="secondary" className="mt-4">
+                          {rank.label}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                )}
+
+                  <div className="rounded-3xl border bg-card p-6 text-right">
+                    <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                      Kontostand
+                    </p>
+                    <p className={`mt-3 text-4xl font-semibold ${balanceColor}`}>
+                      {tabBalance > 0 ? '-' : ''}
+                      {balanceFormatted}
+                    </p>
+                    <p className="mt-2 text-xs text-muted-foreground">Aktualisiert in Echtzeit</p>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-2xl border bg-card p-5">
+                    <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                      Status
+                    </p>
+                    <p className="mt-2 text-base font-medium">
+                      {user.role === 'admin' ? 'Admin' : 'Mitglied'}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border bg-card p-5">
+                    <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                      Mitglied seit
+                    </p>
+                    <p className="mt-2 text-base font-medium">
+                      {user.createdAt ? new Date(user.createdAt).toLocaleDateString('de-DE') : '—'}
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          )}
-        </section>
-      </div>
 
-      <aside className="space-y-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Deine Statistiken</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            <div className="rounded-xl border border-border/50 bg-background/60 p-4">
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                Letzter Konsum
-              </p>
-              <p className="mt-1 text-sm font-medium text-foreground">Noch keine Daten</p>
-            </div>
-            <div className="rounded-xl border border-border/50 bg-background/60 p-4">
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                Lieblings-Getränk
-              </p>
-              <p className="mt-1 text-sm font-medium text-foreground">Noch keine Daten</p>
-            </div>
-          </CardContent>
-        </Card>
-      </aside>
+            <section className="space-y-5">
+              {activeSession ? (
+                <SessionCard session={activeSession} currentUser={user as Member} />
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>Keine aktive Sitzung</CardTitle>
+                      <Badge variant="secondary">Inaktiv</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-5">
+                    <p className="text-sm text-muted-foreground">
+                      Es läuft derzeit keine Bar-Sitzung. Warte auf einen Admin, um eine Sitzung zu
+                      eröffnen.
+                    </p>
+
+                    {user.role === 'admin' && <CreateSessionDialog members={members as Member[]} />}
+                  </CardContent>
+                </Card>
+              )}
+            </section>
+          </div>
+
+          <aside className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Deine Statistiken</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-4">
+                <div className="rounded-2xl border bg-card p-5">
+                  <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                    Letzter Konsum
+                  </p>
+                  <p className="mt-3 text-base font-medium">Noch keine Daten</p>
+                </div>
+                <div className="rounded-2xl border bg-card p-5">
+                  <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">
+                    Lieblings-Getränk
+                  </p>
+                  <p className="mt-3 text-base font-medium">Noch keine Daten</p>
+                </div>
+              </CardContent>
+            </Card>
+          </aside>
+        </div>
+      </div>
     </div>
   )
 }

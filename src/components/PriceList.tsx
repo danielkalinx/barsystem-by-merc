@@ -193,7 +193,7 @@ export function PriceList({ session, products, members, canOrder }: PriceListPro
             <CardTitle className="text-lg">
               {isSessionActive ? 'Aktive Sitzung' : 'Keine aktive Sitzung'}
             </CardTitle>
-            <Badge variant={isSessionActive ? 'default' : 'secondary'} className="px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+            <Badge variant={isSessionActive ? 'default' : 'secondary'}>
               {isSessionActive ? 'Bestellungen möglich' : 'Nur Ansicht'}
             </Badge>
           </div>
@@ -263,14 +263,10 @@ export function PriceList({ session, products, members, canOrder }: PriceListPro
                       <div>
                         <div className="flex items-start justify-between">
                           <CardTitle className="text-lg font-semibold">{product.name}</CardTitle>
-                          {product.popular && (
-                            <Badge variant="secondary" className="rounded-full px-2 py-0.5 text-xs font-medium">
-                              Beliebt
-                            </Badge>
-                          )}
+                          {product.popular && <Badge variant="secondary">Beliebt</Badge>}
                         </div>
                         {product.category && (
-                          <Badge variant="outline" className="mt-3 w-fit rounded-full border-border/60">
+                          <Badge variant="outline" className="mt-3">
                             {product.category}
                           </Badge>
                         )}
