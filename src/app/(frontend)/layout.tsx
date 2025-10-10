@@ -1,5 +1,4 @@
 import './styles.css'
-import { Navbar } from '@/components/Navbar'
 
 export const metadata = {
   title: 'Bar Management System',
@@ -24,10 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         /> */}
       </head>
-      <body className="text-foreground antialiased">
-        <Navbar />
-        <main className="mx-auto">{children}</main>
-      </body>
+      <body className="text-foreground antialiased">{children}</body>
     </html>
   )
 }

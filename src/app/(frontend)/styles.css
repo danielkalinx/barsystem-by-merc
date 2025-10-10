@@ -101,6 +101,7 @@
   --sidebar-background: oklch(1.000 0.000 0.000);
   --font-sans: 'Lato', sans-serif;
   --font-serif: 'Plus Jakarta Sans', sans-serif;
+  --sidebar-primary-foreground: hsl(0 0% 98%);
 }
 
 .dark {

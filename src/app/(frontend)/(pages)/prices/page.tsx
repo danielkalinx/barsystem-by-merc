@@ -44,7 +44,7 @@ export default async function PricesPage() {
   const canOrder = Boolean(typedSession && (isAdmin || isBartender))
 
   return (
-    <div className="container mx-auto px-6 pt-32 space-y-8">
+    <div className="container mx-auto px-6 pb-10 pt-32 lg:pt-10 space-y-8">
       <Card>
         <CardContent className="space-y-2">
           <h1 className="text-3xl font-semibold">Preisliste</h1>

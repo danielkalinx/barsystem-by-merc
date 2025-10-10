@@ -33,16 +33,39 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The app uses Next.js App Router with **route groups** to separate concerns:
 
-- **`src/app/(frontend)/`** - ShadCN/UI-based frontend application
-  - Main pages: `/prices`, `/session`, `/members`
-  - Requires authentication for all routes
-  - Uses ShadCN components and Tailwind CSS
+```
+src/app/
+├── (frontend)/                    # Frontend application
+│   ├── (dashboard)/               # Dashboard route group - Sidebar navigation
+│   │   ├── layout.tsx            # Sidebar + MobileNav layout
+│   │   └── page.tsx              # Dashboard home (/)
+│   ├── (pages)/                   # Pages route group - Navbar navigation
+│   │   ├── layout.tsx            # Navbar layout (desktop & mobile)
+│   │   ├── login/page.tsx        # Login page (/login)
+│   │   ├── prices/page.tsx       # Price list (/prices)
+│   │   ├── session/page.tsx      # Session management (/session)
+│   │   └── preview/page.tsx      # Component preview (/preview)
+│   ├── layout.tsx                # Root layout (HTML, global styles)
+│   ├── styles.css                # Global CSS & design tokens
+│   └── actions.ts                # Server actions
+├── (payload)/                     # PayloadCMS admin and API
+│   ├── admin/[[...segments]]/    # Catch-all admin panel routes
+│   ├── api/[...slug]/            # Catch-all Payload REST API
+│   ├── api/graphql/              # GraphQL API endpoint
+│   └── layout.tsx                # Admin layout wrapper
+```
 
-- **`src/app/(payload)/`** - PayloadCMS admin and API routes
-  - `admin/[[...segments]]/` - Catch-all admin panel routes
-  - `api/[...slug]/` - Catch-all Payload REST API routes
-  - `api/graphql/` - GraphQL API endpoint
-  - `layout.tsx` - Admin layout wrapper
+**Navigation Strategy:**
+- **Dashboard group** (`(dashboard)/`): Only `/` - Uses Sidebar (desktop) + MobileNav (mobile)
+- **Pages group** (`(pages)/`): All other pages - Uses Navbar (desktop & mobile, same design)
+- **Shared navigation constants**: `src/lib/navigation.ts` - Single source of truth for nav items
+- **No pathname-based conditionals**: Layouts control which navigation appears, not components
+
+**Navigation Components:**
+- `src/components/AppSidebar.tsx` - Desktop sidebar for dashboard
+- `src/components/MobileNav.tsx` - Mobile floating pills for dashboard
+- `src/components/Navbar.tsx` - Old navbar design for all pages (desktop & mobile)
+- `src/lib/navigation.ts` - Shared NAV_ITEMS constant (avoid duplication)
 
 ### Core Collections (PayloadCMS)
 

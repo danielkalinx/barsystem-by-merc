@@ -22,7 +22,7 @@ export async function Dashboard() {
 
   return (
     <div className="relative min-h-screen bg-secondary">
-      <div className="container relative mx-auto px-6 pb-20 pt-32 lg:pt-36">
+      <div className="container relative mx-auto px-6 pb-10 pt-32 lg:pt-10">
         <div className="grid gap-10 lg:grid-cols-[2fr_1fr]">
           <div className="space-y-8">
             <Card>

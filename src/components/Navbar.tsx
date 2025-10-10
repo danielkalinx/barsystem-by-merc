@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import { motion } from 'motion/react'
-import { MainNav } from '@/components/MainNav'
 import { UserAvatar } from '@/components/UserAvatar'
+import { NAV_ITEMS } from '@/lib/navigation'
 import { useEffect, useState } from 'react'
 import type { Member } from '@/payload-types'
 
@@ -17,6 +18,7 @@ interface Settings {
 }
 
 export function Navbar() {
+  const pathname = usePathname()
   const [settings, setSettings] = useState<Settings | null>(null)
   const [user, setUser] = useState<Member | null>(null)
 
@@ -67,7 +69,23 @@ export function Navbar() {
             <span>{fraternityName}</span>
           </Link>
           <div className="flex items-center gap-6">
-            <MainNav />
+            <nav className="flex items-center gap-6">
+              {NAV_ITEMS.filter((item) => item.href !== '/').map((item) => {
+                const isActive = pathname === item.href
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`text-sm font-medium transition-colors hover:text-foreground ${
+                      isActive ? 'text-foreground' : 'text-muted-foreground'
+                    }`}
+                  >
+                    {item.title}
+                  </Link>
+                )
+              })}
+            </nav>
             {user && (
               <>
                 <div className="h-6 w-px bg-border" />
