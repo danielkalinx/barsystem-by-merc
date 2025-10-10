@@ -185,7 +185,7 @@
     @apply h-full m-0 p-0;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-secondary text-foreground;
   }
 
   body.no-navbar header {

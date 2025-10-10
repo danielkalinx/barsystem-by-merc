@@ -36,6 +36,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de" suppressHydrationWarning>
       <head>
+        <meta
+          name="theme-color"
+          content="#f0f0f0"
+          media="(prefers-color-scheme: light)"
+        />
+        <meta
+          name="theme-color"
+          content="#2d2d2d"
+          media="(prefers-color-scheme: dark)"
+        />
         <link rel="stylesheet" href="/api/theme" />
         <script
           dangerouslySetInnerHTML={{
