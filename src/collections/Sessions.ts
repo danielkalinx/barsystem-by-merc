@@ -66,6 +66,15 @@ export const Sessions: CollectionConfig = {
       },
     },
     {
+      name: 'durationMinutes',
+      type: 'number',
+      label: 'Dauer (Minuten)',
+      admin: {
+        description: 'Automatisch berechnet beim Schließen der Sitzung',
+        readOnly: true,
+      },
+    },
+    {
       name: 'bartenders',
       type: 'array',
       label: 'Schenken',

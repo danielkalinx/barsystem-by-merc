@@ -88,8 +88,12 @@ export const Orders: CollectionConfig = {
         { label: 'Ausstehend', value: 'pending' },
         { label: 'Abgeschlossen', value: 'completed' },
         { label: 'Storniert', value: 'cancelled' },
+        { label: 'Fehlgeschlagen', value: 'failed' },
       ],
       defaultValue: 'completed',
+      admin: {
+        description: '"Fehlgeschlagen" bedeutet, dass die Bestellung aufgrund eines Systemfehlers nicht vollständig verarbeitet werden konnte',
+      },
     },
   ],
   timestamps: true,
