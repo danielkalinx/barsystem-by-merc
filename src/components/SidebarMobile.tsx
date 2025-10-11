@@ -2,47 +2,16 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence, LayoutGroup } from 'motion/react'
 import { NAV_ITEMS } from '@/lib/navigation'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 
-export function SidebarMobile() {
+// Shared navigation content component
+function NavContent({ disableAnimation = false }: { disableAnimation?: boolean }) {
   const pathname = usePathname()
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [showFloating, setShowFloating] = useState(false)
-  const [lastScrollY, setLastScrollY] = useState(0)
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-
-      // User has scrolled past threshold
-      if (currentScrollY > 150) {
-        setIsScrolled(true)
-
-        // Scrolling up - show floating nav
-        if (currentScrollY < lastScrollY) {
-          setShowFloating(true)
-        }
-        // Scrolling down - hide floating nav
-        else if (currentScrollY > lastScrollY) {
-          setShowFloating(false)
-        }
-      } else {
-        // At top of page
-        setIsScrolled(false)
-        setShowFloating(false)
-      }
-
-      setLastScrollY(currentScrollY)
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
-
-  const NavContent = ({ layoutId }: { layoutId: string }) => {
-    return (
+  return (
+    <LayoutGroup>
       <div className="flex items-center gap-2">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href
@@ -54,25 +23,31 @@ export function SidebarMobile() {
               href={item.href}
               className="relative flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-medium"
             >
-              {/* Animated background using layoutId */}
+              {/* Animated pill background */}
               {isActive && (
                 <motion.div
-                  layoutId={layoutId}
+                  layoutId="nav-pill"
                   className="absolute inset-0 bg-primary rounded-full"
-                  transition={{
-                    type: 'spring',
-                    stiffness: 400,
-                    damping: 35,
-                  }}
+                  transition={
+                    disableAnimation
+                      ? { duration: 0 }
+                      : {
+                          type: 'spring',
+                          stiffness: 400,
+                          damping: 35,
+                        }
+                  }
                 />
               )}
 
-              {/* Content */}
+              {/* Icon */}
               <Icon
                 className={`relative z-10 size-4 shrink-0 transition-colors duration-200 ${
                   isActive ? 'text-primary-foreground' : 'text-muted-foreground'
                 }`}
               />
+
+              {/* Active text */}
               <AnimatePresence mode="wait">
                 {isActive && (
                   <motion.span
@@ -94,8 +69,58 @@ export function SidebarMobile() {
           )
         })}
       </div>
-    )
-  }
+    </LayoutGroup>
+  )
+}
+
+export function SidebarMobile() {
+  const pathname = usePathname()
+  const [showFloating, setShowFloating] = useState(false)
+  const [lastScrollY, setLastScrollY] = useState(0)
+  const [isScrolling, setIsScrolling] = useState(false)
+
+  // Reset scrolling state on navigation
+  useEffect(() => {
+    setIsScrolling(false)
+  }, [pathname])
+
+  useEffect(() => {
+    let scrollTimeout: NodeJS.Timeout
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+
+      // Set scrolling state
+      setIsScrolling(true)
+      clearTimeout(scrollTimeout)
+      scrollTimeout = setTimeout(() => {
+        setIsScrolling(false)
+      }, 150)
+
+      // User has scrolled past threshold
+      if (currentScrollY > 150) {
+        // Scrolling up - show floating nav
+        if (currentScrollY < lastScrollY) {
+          setShowFloating(true)
+        }
+        // Scrolling down - hide floating nav
+        else if (currentScrollY > lastScrollY) {
+          setShowFloating(false)
+        }
+      } else {
+        // At top of page
+        setShowFloating(false)
+      }
+
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      clearTimeout(scrollTimeout)
+    }
+  }, [lastScrollY])
 
   return (
     <>
@@ -103,15 +128,16 @@ export function SidebarMobile() {
       <header className="absolute top-0 z-50 w-full lg:hidden">
         <div className="container mx-auto px-6 pt-6">
           <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-            <NavContent layoutId="static-pill" />
+            <NavContent disableAnimation={isScrolling} />
           </div>
         </div>
       </header>
 
       {/* Floating Navigation (shows on scroll up) */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {showFloating && (
           <motion.header
+            key="floating-nav"
             className="fixed top-0 z-50 w-full lg:hidden"
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -122,7 +148,7 @@ export function SidebarMobile() {
 
             <div className="container relative mx-auto px-6 pt-6">
               <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide rounded-full border border-border/50 bg-background/95 px-4 py-3 backdrop-blur-md">
-                <NavContent layoutId="floating-pill" />
+                <NavContent disableAnimation={isScrolling} />
               </div>
             </div>
           </motion.header>
