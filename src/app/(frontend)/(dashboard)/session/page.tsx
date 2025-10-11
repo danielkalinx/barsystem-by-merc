@@ -5,8 +5,6 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Member } from '@/payload-types'
 
-export const revalidate = 5 // Revalidate every 5 seconds for near real-time updates
-
 export default async function SessionPage() {
   const user = await getCurrentUser()
   const activeSession = await getActiveSession()

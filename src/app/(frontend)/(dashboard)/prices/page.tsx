@@ -8,8 +8,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { PriceList } from '@/components/PriceList'
 import type { Member, Product, Session } from '@/payload-types'
 
-export const revalidate = 5 // Revalidate every 5 seconds for near real-time updates
-
 export default async function PricesPage() {
   const [user, session, products, members] = await Promise.all([
     getCurrentUser(),
@@ -18,14 +16,14 @@ export default async function PricesPage() {
     getAllMembers(),
   ])
 
-  const typedUser = user as Member
+  const typedUser = user as Member | null
   const typedSession = session as Session | null
   const typedMembers = (members as Member[]) || []
   const typedProducts = (products as Product[]) || []
 
-  const isAdmin = typedUser.role === 'admin'
+  const isAdmin = typedUser?.role === 'admin'
   const isBartender =
-    typedSession?.bartenders?.some((bartender) => {
+    (typedUser && typedSession?.bartenders?.some((bartender) => {
       const member = bartender.member
       const bartenderId =
         typeof member === 'string'
@@ -34,9 +32,9 @@ export default async function PricesPage() {
             ? member.id
             : null
       return bartenderId === typedUser.id
-    }) ?? false
+    })) ?? false
 
-  const canOrder = Boolean(typedSession && (isAdmin || isBartender))
+  const canOrder = Boolean(typedUser && typedSession && (isAdmin || isBartender))
 
   return (
     <div className="container mx-auto px-6 pb-10 space-y-8">

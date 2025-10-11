@@ -124,6 +124,14 @@ export const Sessions: CollectionConfig = {
       ],
     },
     {
+      name: 'notes',
+      type: 'textarea',
+      label: 'Notizen',
+      admin: {
+        description: 'Optional: Notizen zur Sitzung',
+      },
+    },
+    {
       name: 'totalRevenue',
       type: 'number',
       label: 'Gesamtumsatz',

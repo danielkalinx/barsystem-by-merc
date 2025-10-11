@@ -24,6 +24,11 @@ const fuchsRank = ranks.find((r) => r.value === 'fuchs')
 const burscheRank = ranks.find((r) => r.value === 'bursche')
 const externeRank = ranks.find((r) => r.value === 'externe')
 
+if (!fuchsRank || !burscheRank || !externeRank) {
+  console.error('Required ranks not found. Please ensure Fuchs, Bursche, and Externe ranks exist.')
+  process.exit(1)
+}
+
 const members = [
   {
     email: 'admin@mercuria.at',
@@ -32,7 +37,7 @@ const members = [
     firstName: 'Max',
     lastName: 'Mustermann',
     couleurname: 'Maximus',
-    rank: burscheRank?.id,
+    rank: burscheRank.id,
     tabBalance: 0,
   },
   {
@@ -42,7 +47,7 @@ const members = [
     firstName: 'Franz',
     lastName: 'Huber',
     couleurname: 'Franziskus',
-    rank: burscheRank?.id,
+    rank: burscheRank.id,
     tabBalance: 15.50,
   },
   {
@@ -52,7 +57,7 @@ const members = [
     firstName: 'Thomas',
     lastName: 'Meier',
     couleurname: 'Thor',
-    rank: fuchsRank?.id,
+    rank: fuchsRank.id,
     tabBalance: 8.20,
   },
   {
@@ -62,7 +67,7 @@ const members = [
     firstName: 'Peter',
     lastName: 'Schmidt',
     couleurname: 'Petrus',
-    rank: burscheRank?.id,
+    rank: burscheRank.id,
     tabBalance: 0,
   },
   {
@@ -72,7 +77,7 @@ const members = [
     firstName: 'Gast',
     lastName: 'Besucher',
     couleurname: 'Visitor',
-    rank: externeRank?.id,
+    rank: externeRank.id,
     tabBalance: 5.00,
   },
 ]

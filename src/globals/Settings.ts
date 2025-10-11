@@ -40,7 +40,7 @@ export const Settings: GlobalConfig = {
         description:
           'Hex-Farbcode für die Primärfarbe im hellen Modus. Standard: #D00507. Diese Farbe wird automatisch als CSS-Variable gesetzt.',
       },
-      validate: (value: string) => {
+      validate: (value: string | null | undefined) => {
         if (!value) return true
         const hexPattern = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
         if (!hexPattern.test(value)) {
@@ -58,7 +58,7 @@ export const Settings: GlobalConfig = {
         description:
           'Hex-Farbcode für die Primärfarbe im dunklen Modus. Standard: #CC3335. Optional - falls nicht gesetzt, wird die Hell-Modus-Farbe (#D00507) verwendet.',
       },
-      validate: (value: string) => {
+      validate: (value: string | null | undefined) => {
         if (!value) return true
         const hexPattern = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
         if (!hexPattern.test(value)) {

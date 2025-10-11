@@ -1,5 +1,3 @@
-export const revalidate = 30 // Cache for 30 seconds
-
 export default function MembersPage() {
   return (
     <div className="container mx-auto py-6">

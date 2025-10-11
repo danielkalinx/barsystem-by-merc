@@ -288,6 +288,10 @@ export interface Session {
       }[]
     | null;
   /**
+   * Optional: Notizen zur Sitzung
+   */
+  notes?: string | null;
+  /**
    * Wird automatisch aus Bestellungen berechnet
    */
   totalRevenue?: number | null;
@@ -547,6 +551,7 @@ export interface SessionsSelect<T extends boolean = true> {
         bartenderStatus?: T;
         id?: T;
       };
+  notes?: T;
   totalRevenue?: T;
   statistics?:
     | T
