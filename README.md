@@ -2,6 +2,7 @@
 
 A web application for managing drink tabs at K.Ö.H.V. Mercuria, a Vienna-based student fraternity. The system tracks member orders during bar sessions, manages tabs, and facilitates semester-based payment collection.
 
+
 ## Tech Stack
 
 - **Frontend**: Next.js 15 (App Router) + ShadCN/UI + Tailwind CSS
