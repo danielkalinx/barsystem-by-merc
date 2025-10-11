@@ -33,16 +33,39 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The app uses Next.js App Router with **route groups** to separate concerns:
 
-- **`src/app/(frontend)/`** - ShadCN/UI-based frontend application
-  - Main pages: `/prices`, `/session`, `/members`
-  - Requires authentication for all routes
-  - Uses ShadCN components and Tailwind CSS
+```
+src/app/
+├── (frontend)/                    # Frontend application
+│   ├── (dashboard)/               # Dashboard route group - Sidebar navigation
+│   │   ├── layout.tsx            # AppSidebar (desktop) + SidebarMobile (mobile) layout
+│   │   └── page.tsx              # Dashboard home (/)
+│   ├── (pages)/                   # Pages route group - Navbar navigation
+│   │   ├── layout.tsx            # Navbar layout (desktop & mobile)
+│   │   ├── login/page.tsx        # Login page (/login)
+│   │   ├── prices/page.tsx       # Price list (/prices)
+│   │   ├── session/page.tsx      # Session management (/session)
+│   │   └── preview/page.tsx      # Component preview (/preview)
+│   ├── layout.tsx                # Root layout (HTML, global styles)
+│   ├── styles.css                # Global CSS & design tokens
+│   └── actions.ts                # Server actions
+├── (payload)/                     # PayloadCMS admin and API
+│   ├── admin/[[...segments]]/    # Catch-all admin panel routes
+│   ├── api/[...slug]/            # Catch-all Payload REST API
+│   ├── api/graphql/              # GraphQL API endpoint
+│   └── layout.tsx                # Admin layout wrapper
+```
 
-- **`src/app/(payload)/`** - PayloadCMS admin and API routes
-  - `admin/[[...segments]]/` - Catch-all admin panel routes
-  - `api/[...slug]/` - Catch-all Payload REST API routes
-  - `api/graphql/` - GraphQL API endpoint
-  - `layout.tsx` - Admin layout wrapper
+**Navigation Strategy:**
+- **Dashboard group** (`(dashboard)/`): Only `/` - Uses AppSidebar (desktop) + SidebarMobile (mobile)
+- **Pages group** (`(pages)/`): All other pages - Uses Navbar (desktop & mobile, same design)
+- **Shared navigation constants**: `src/lib/navigation.ts` - Single source of truth for nav items
+- **No pathname-based conditionals**: Layouts control which navigation appears, not components
+
+**Navigation Components:**
+- `src/components/AppSidebar.tsx` - Desktop sidebar for dashboard
+- `src/components/SidebarMobile.tsx` - Mobile floating pills navigation for dashboard (counterpart to desktop sidebar)
+- `src/components/Navbar.tsx` - Old navbar design for all pages (desktop & mobile)
+- `src/lib/navigation.ts` - Shared NAV_ITEMS constant (avoid duplication)
 
 ### Core Collections (PayloadCMS)
 
@@ -168,6 +191,8 @@ Copy `.env.example` to `.env` and configure values.
 
 **Data Sync**: Use short polling (5-10s intervals) or manual refresh buttons for cross-device updates (no WebSockets for MVP)
 
+**Language**: All client-facing UI text must be in German. Text can be fun and playful. This includes buttons, labels, headings, placeholders, error messages, and any user-visible text in the frontend application (`src/app/(frontend)/`).
+
 ## Working with Collections
 
 1. Create new collection in `src/collections/YourCollection.ts`
@@ -184,3 +209,45 @@ Copy `.env.example` to `.env` and configure values.
 - **Module system**: ES modules
 - **Build optimization**: Uses `--max-old-space-size=8000` for large builds
 - Keep the design very minimal, almost no styling, And use ShaDcn components wherever possible.
+- **IMPORTANT: Always use standard Tailwind classes instead of arbitrary values** (e.g., use `text-3xl` instead of `text-[30px]`, `max-w-sm` instead of `max-w-[360px]`). Only use arbitrary values when absolutely necessary for exact design requirements.
+- Memorize to always use the Tailwind CSS variables from styles.css if possible. Check every time when creating Tailwind classes.
+- **IMPORTANT: Do NOT override ShadCN component default styles with className props** (e.g., avoid `className="h-9 rounded-md"` on Input/Button components). Only add non-conflicting classes like layout/spacing utilities. Let the base component styles (defined in `src/components/ui/`) apply by default for consistency.
+- dont start dev server unless asked
+- there no tailwind config file because this project uses tailwind v4
+- Dont use shadows as a design element. Rather turn to muted background colors to create contrast.
+- add sublte aniamtion with "motion" from motion.dev
+- website ist pwa ready
+
+### Loading States & Performance
+
+**Always use Skeleton loaders for async page navigation:**
+- Create `loading.tsx` files in route directories to show skeleton states while pages load
+- Use the ShadCN `Skeleton` component from `@/components/ui/skeleton`
+- Match the skeleton layout to the actual page structure for seamless transitions
+- Skeleton loaders significantly improve perceived performance and UX
+
+**Page Caching Strategy:**
+- Use `export const revalidate = X` (in seconds) instead of `force-dynamic` for better performance
+- Dashboard pages: `revalidate = 10` (general content)
+- Real-time pages (prices, session): `revalidate = 5` (near real-time data)
+- Static pages: `revalidate = 30` or higher
+- Only use `force-dynamic` when absolutely necessary (real-time critical data)
+
+**Example loading.tsx structure:**
+```tsx
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+
+export default function PageLoading() {
+  return (
+    <div className="container mx-auto px-6 pb-10 space-y-8">
+      <Card>
+        <CardContent>
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="mt-4 h-4 w-full" />
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+```

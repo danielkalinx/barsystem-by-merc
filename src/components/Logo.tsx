@@ -2,16 +2,25 @@
 import React from 'react'
 import Image from 'next/image'
 
-export const Logo = () => {
+interface LogoProps {
+  className?: string
+  color?: 'Default'
+  size?: number
+}
+
+export const Logo = ({ className, color = 'Default', size = 36 }: LogoProps) => {
   return (
-    <div className="flex items-center">
-      <Image
-        src="/merc-icon.png"
-        alt="Mercuria Logo"
-        width={32}
-        height={32}
-        className="object-contain"
-      />
+    <div className={className} data-color={color}>
+      <div className="relative" style={{ width: size, height: size }}>
+        <Image
+          src="/merc-icon.png"
+          alt="Mercuria Logo"
+          width={size}
+          height={size}
+          className="object-cover"
+          priority
+        />
+      </div>
     </div>
   )
 }

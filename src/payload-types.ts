@@ -94,8 +94,12 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    settings: Setting;
+  };
+  globalsSelect: {
+    settings: SettingsSelect<false> | SettingsSelect<true>;
+  };
   locale: null;
   user: Member & {
     collection: 'members';
@@ -183,7 +187,7 @@ export interface Member {
   /**
    * Rang des Mitglieds - bitte aus Ränge-Sammlung auswählen
    */
-  rank?: (string | null) | Rank;
+  rank: string | Rank;
   /**
    * Wird automatisch bei Bestellungen und Zahlungen aktualisiert
    */
@@ -611,6 +615,56 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Allgemeine Einstellungen für die Verbindung
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: string;
+  fraternityName: string;
+  fraternityShortName?: string | null;
+  logo?: (string | null) | Media;
+  /**
+   * Hex-Farbcode für die Primärfarbe im hellen Modus. Standard: #D00507. Diese Farbe wird automatisch als CSS-Variable gesetzt.
+   */
+  primaryColor?: string | null;
+  /**
+   * Hex-Farbcode für die Primärfarbe im dunklen Modus. Standard: #CC3335. Optional - falls nicht gesetzt, wird die Hell-Modus-Farbe (#D00507) verwendet.
+   */
+  primaryColorDark?: string | null;
+  /**
+   * Allgemeine Kontakt-E-Mail-Adresse für Anfragen
+   */
+  contactEmail?: string | null;
+  /**
+   * E-Mail-Adresse für Barkeeper-bezogene Anfragen und Koordination
+   */
+  bartenderEmail?: string | null;
+  websiteUrl?: string | null;
+  address?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  fraternityName?: T;
+  fraternityShortName?: T;
+  logo?: T;
+  primaryColor?: T;
+  primaryColorDark?: T;
+  contactEmail?: T;
+  bartenderEmail?: T;
+  websiteUrl?: T;
+  address?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

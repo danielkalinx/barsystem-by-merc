@@ -42,7 +42,6 @@ export const Members: CollectionConfig = {
       },
       admin: {
         description: 'Systemrolle für Berechtigungen. Bartender wird über Sitzungen zugewiesen.',
-        readOnly: true,
       },
     },
     {
@@ -53,9 +52,6 @@ export const Members: CollectionConfig = {
       access: {
         update: ({ req: { user } }) => user?.role === 'admin', // Only admins can update
       },
-      admin: {
-        readOnly: true,
-      },
     },
     {
       name: 'lastName',
@@ -65,9 +61,6 @@ export const Members: CollectionConfig = {
       access: {
         update: ({ req: { user } }) => user?.role === 'admin', // Only admins can update
       },
-      admin: {
-        readOnly: true,
-      },
     },
     {
       name: 'couleurname',
@@ -76,9 +69,6 @@ export const Members: CollectionConfig = {
       label: 'Couleurname',
       access: {
         update: ({ req: { user } }) => user?.role === 'admin', // Only admins can update
-      },
-      admin: {
-        readOnly: true,
       },
     },
     {
@@ -96,14 +86,13 @@ export const Members: CollectionConfig = {
       name: 'rank',
       type: 'relationship',
       relationTo: 'ranks',
-      required: false,
+      required: true,
       label: 'Rang',
       access: {
         update: ({ req: { user } }) => user?.role === 'admin', // Only admins can change rank
       },
       admin: {
         description: 'Rang des Mitglieds - bitte aus Ränge-Sammlung auswählen',
-        readOnly: true,
       },
     },
     {
@@ -116,7 +105,6 @@ export const Members: CollectionConfig = {
       },
       admin: {
         description: 'Wird automatisch bei Bestellungen und Zahlungen aktualisiert',
-        readOnly: true,
       },
     },
   ],
