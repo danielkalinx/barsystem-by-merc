@@ -4,18 +4,13 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'motion/react'
 import { NAV_ITEMS } from '@/lib/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 export function SidebarMobile() {
   const pathname = usePathname()
   const [isScrolled, setIsScrolled] = useState(false)
   const [showFloating, setShowFloating] = useState(false)
   const [lastScrollY, setLastScrollY] = useState(0)
-  const [colors, setColors] = useState({
-    primary: '',
-    primaryForeground: '',
-    mutedForeground: '',
-  })
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,59 +41,59 @@ export function SidebarMobile() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [lastScrollY])
 
-  // Compute colors after hydration
-  useEffect(() => {
-    const styles = getComputedStyle(document.documentElement)
-    setColors({
-      primary: styles.getPropertyValue('--primary'),
-      primaryForeground: styles.getPropertyValue('--primary-foreground'),
-      mutedForeground: styles.getPropertyValue('--muted-foreground'),
-    })
-  }, [])
-
-  const NavContent = () => {
-
+  const NavContent = ({ layoutId }: { layoutId: string }) => {
     return (
-      <>
+      <div className="flex items-center gap-2">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href
           const Icon = item.icon
 
           return (
-            <Link key={item.href} href={item.href} className="shrink-0">
-              <motion.div
-                initial={false}
-                animate={{
-                  backgroundColor: isActive ? colors.primary : 'transparent',
-                  color: isActive ? colors.primaryForeground : colors.mutedForeground,
-                }}
-                transition={{
-                  duration: 0.4,
-                  ease: [0.4, 0, 0.2, 1],
-                }}
-                className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium"
-              >
-                <Icon className="size-4 shrink-0" />
-                <motion.span
-                  initial={false}
-                  animate={{
-                    width: isActive ? 'auto' : 0,
-                    opacity: isActive ? 1 : 0,
-                    marginLeft: isActive ? '0.5rem' : 0,
-                  }}
+            <Link
+              key={item.href}
+              href={item.href}
+              className="relative flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-medium"
+            >
+              {/* Animated background using layoutId */}
+              {isActive && (
+                <motion.div
+                  layoutId={layoutId}
+                  className="absolute inset-0 bg-primary rounded-full"
                   transition={{
-                    duration: 0.4,
-                    ease: [0.4, 0, 0.2, 1],
+                    type: 'spring',
+                    stiffness: 400,
+                    damping: 35,
                   }}
-                  className="overflow-hidden whitespace-nowrap"
-                >
-                  {item.title}
-                </motion.span>
-              </motion.div>
+                />
+              )}
+
+              {/* Content */}
+              <Icon
+                className={`relative z-10 size-4 shrink-0 transition-colors duration-200 ${
+                  isActive ? 'text-primary-foreground' : 'text-muted-foreground'
+                }`}
+              />
+              <AnimatePresence mode="wait">
+                {isActive && (
+                  <motion.span
+                    key="text"
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: 'auto', opacity: 1 }}
+                    exit={{ width: 0, opacity: 0 }}
+                    transition={{
+                      duration: 0.25,
+                      ease: [0.4, 0, 0.2, 1],
+                    }}
+                    className="relative z-10 overflow-hidden whitespace-nowrap text-primary-foreground"
+                  >
+                    {item.title}
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </Link>
           )
         })}
-      </>
+      </div>
     )
   }
 
@@ -108,7 +103,7 @@ export function SidebarMobile() {
       <header className="absolute top-0 z-50 w-full lg:hidden">
         <div className="container mx-auto px-6 pt-6">
           <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-            <NavContent />
+            <NavContent layoutId="static-pill" />
           </div>
         </div>
       </header>
@@ -127,7 +122,7 @@ export function SidebarMobile() {
 
             <div className="container relative mx-auto px-6 pt-6">
               <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide rounded-full border border-border/50 bg-background/95 px-4 py-3 backdrop-blur-md">
-                <NavContent />
+                <NavContent layoutId="floating-pill" />
               </div>
             </div>
           </motion.header>
