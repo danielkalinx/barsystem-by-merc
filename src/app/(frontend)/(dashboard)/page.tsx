@@ -1,15 +1,7 @@
-import { redirect } from 'next/navigation'
-import { getCurrentUser } from '../actions'
 import { Dashboard } from '@/components/Dashboard'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 10 // Revalidate every 10 seconds instead of on every request
 
 export default async function LandingPage() {
-  const user = await getCurrentUser()
-
-  if (!user) {
-    redirect('/login')
-  }
-
   return <Dashboard />
 }

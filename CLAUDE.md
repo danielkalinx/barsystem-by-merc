@@ -217,3 +217,37 @@ Copy `.env.example` to `.env` and configure values.
 - Dont use shadows as a design element. Rather turn to muted background colors to create contrast.
 - add sublte aniamtion with "motion" from motion.dev
 - website ist pwa ready
+
+### Loading States & Performance
+
+**Always use Skeleton loaders for async page navigation:**
+- Create `loading.tsx` files in route directories to show skeleton states while pages load
+- Use the ShadCN `Skeleton` component from `@/components/ui/skeleton`
+- Match the skeleton layout to the actual page structure for seamless transitions
+- Skeleton loaders significantly improve perceived performance and UX
+
+**Page Caching Strategy:**
+- Use `export const revalidate = X` (in seconds) instead of `force-dynamic` for better performance
+- Dashboard pages: `revalidate = 10` (general content)
+- Real-time pages (prices, session): `revalidate = 5` (near real-time data)
+- Static pages: `revalidate = 30` or higher
+- Only use `force-dynamic` when absolutely necessary (real-time critical data)
+
+**Example loading.tsx structure:**
+```tsx
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+
+export default function PageLoading() {
+  return (
+    <div className="container mx-auto px-6 pb-10 space-y-8">
+      <Card>
+        <CardContent>
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="mt-4 h-4 w-full" />
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+```
