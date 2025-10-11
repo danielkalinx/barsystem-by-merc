@@ -90,6 +90,9 @@ export async function createSession(data: {
       throw new Error('Unauthorized: Only admins can create sessions')
     }
 
+    // Input sanitization for notes
+    const sanitizedNotes = data.notes?.trim() || undefined
+
     // Check if there's already an active session
     const activeSession = await getActiveSession()
     if (activeSession) {
@@ -109,6 +112,7 @@ export async function createSession(data: {
           estimatedEndTime: b.estimatedEndTime || undefined,
           bartenderStatus: 'active',
         })),
+        notes: sanitizedNotes,
         totalRevenue: 0,
         statistics: {
           totalProductsSold: 0,
@@ -128,10 +132,24 @@ export async function createSession(data: {
 
 export async function signIn(email: string, password: string) {
   try {
+    // Input sanitization and validation
+    const sanitizedEmail = email?.trim().toLowerCase()
+    const sanitizedPassword = password?.trim()
+
+    if (!sanitizedEmail || !sanitizedPassword) {
+      throw new Error('Email und Passwort sind erforderlich')
+    }
+
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(sanitizedEmail)) {
+      throw new Error('Ungültige E-Mail-Adresse')
+    }
+
     const payload = await getPayload({ config })
     const result = await payload.login({
       collection: 'members',
-      data: { email, password },
+      data: { email: sanitizedEmail, password: sanitizedPassword },
     })
 
     if (result.token) {
@@ -149,7 +167,7 @@ export async function signIn(email: string, password: string) {
     console.error('Error signing in:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to sign in',
+      error: error instanceof Error ? error.message : 'Anmeldung fehlgeschlagen',
     }
   }
 }
@@ -174,13 +192,29 @@ export async function closeSession(sessionId: string) {
       throw new Error('Unauthorized: Only admins can close sessions')
     }
 
-    // Update session to closed
+    // Get session to calculate duration
+    const existingSession = await payload.findByID({
+      collection: 'sessions',
+      id: sessionId,
+      depth: 0,
+    })
+
+    if (!existingSession) {
+      throw new Error('Sitzung nicht gefunden')
+    }
+
+    const endTime = new Date()
+    const startTime = new Date(existingSession.startTime as string)
+    const durationMinutes = Math.round((endTime.getTime() - startTime.getTime()) / 1000 / 60)
+
+    // Update session to closed with duration
     const session = await payload.update({
       collection: 'sessions',
       id: sessionId,
       data: {
         status: 'closed',
-        endTime: new Date().toISOString(),
+        endTime: endTime.toISOString(),
+        durationMinutes,
       },
     })
 
@@ -189,7 +223,7 @@ export async function closeSession(sessionId: string) {
     console.error('Error closing session:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to close session',
+      error: error instanceof Error ? error.message : 'Sitzung schließen fehlgeschlagen',
     }
   }
 }
@@ -338,61 +372,118 @@ export async function createOrder({
       throw new Error('Mitglied nicht gefunden')
     }
 
-    const createdOrder = await payload.create({
-      collection: 'orders',
-      data: {
-        session: activeSession.id,
-        member: memberId,
-        bartender: currentUser.id,
-        items: normalizedItems.map(({ product, quantity, priceAtOrder }) => ({
-          product,
-          quantity,
-          priceAtOrder,
-        })),
-        totalAmount,
-        status: 'completed',
-      },
-      overrideAccess: !isAdmin,
-    })
-
-    const updatedTabBalance =
-      typeof member.tabBalance === 'number' ? member.tabBalance + totalAmount : totalAmount
-
-    await payload.update({
-      collection: 'members',
-      id: memberId,
-      data: {
-        tabBalance: updatedTabBalance,
-      },
-      overrideAccess: true,
-    })
-
-    const currentTotalRevenue =
-      typeof activeSession.totalRevenue === 'number' ? activeSession.totalRevenue : 0
-    const currentStatistics =
-      typeof activeSession.statistics === 'object' ? activeSession.statistics : null
-    const totalProductsSold = currentStatistics?.totalProductsSold ?? 0
-    const mostPopularProduct = currentStatistics?.mostPopularProduct
-
-    const topItem = normalizedItems.reduce((acc, item) => {
-      if (!acc || item.quantity > acc.quantity) {
-        return item
-      }
-      return acc
-    }, null as (typeof normalizedItems)[number] | null)
-
-    await payload.update({
-      collection: 'sessions',
-      id: activeSession.id,
-      data: {
-        totalRevenue: currentTotalRevenue + totalAmount,
-        statistics: {
-          totalProductsSold: totalProductsSold + totalProducts,
-          mostPopularProduct: mostPopularProduct || topItem?.productName,
+    // Create order first - this is our source of truth
+    let createdOrder
+    try {
+      createdOrder = await payload.create({
+        collection: 'orders',
+        data: {
+          session: activeSession.id,
+          member: memberId,
+          bartender: currentUser.id,
+          items: normalizedItems.map(({ product, quantity, priceAtOrder }) => ({
+            product,
+            quantity,
+            priceAtOrder,
+          })),
+          totalAmount,
+          status: 'completed',
         },
-      },
-      overrideAccess: true,
-    })
+        overrideAccess: !isAdmin,
+      })
+    } catch (orderError) {
+      console.error('Failed to create order:', orderError)
+      throw new Error('Bestellung konnte nicht erstellt werden')
+    }
+
+    // Update member tab balance with compensation logic
+    try {
+      const updatedTabBalance =
+        typeof member.tabBalance === 'number' ? member.tabBalance + totalAmount : totalAmount
+
+      await payload.update({
+        collection: 'members',
+        id: memberId,
+        data: {
+          tabBalance: updatedTabBalance,
+        },
+        overrideAccess: true,
+      })
+    } catch (memberUpdateError) {
+      console.error('Failed to update member tab balance:', memberUpdateError)
+      // Compensation: Mark order as failed since we couldn't update the member balance
+      try {
+        await payload.update({
+          collection: 'orders',
+          id: createdOrder.id,
+          data: {
+            status: 'failed',
+          },
+          overrideAccess: true,
+        })
+      } catch (compensationError) {
+        console.error('Failed to compensate order:', compensationError)
+      }
+      throw new Error('Kontostand konnte nicht aktualisiert werden')
+    }
+
+    // Update session statistics with compensation logic
+    try {
+      const currentTotalRevenue =
+        typeof activeSession.totalRevenue === 'number' ? activeSession.totalRevenue : 0
+      const currentStatistics =
+        typeof activeSession.statistics === 'object' ? activeSession.statistics : null
+      const totalProductsSold = currentStatistics?.totalProductsSold ?? 0
+      const mostPopularProduct = currentStatistics?.mostPopularProduct
+
+      const topItem = normalizedItems.reduce((acc, item) => {
+        if (!acc || item.quantity > acc.quantity) {
+          return item
+        }
+        return acc
+      }, null as (typeof normalizedItems)[number] | null)
+
+      await payload.update({
+        collection: 'sessions',
+        id: activeSession.id,
+        data: {
+          totalRevenue: currentTotalRevenue + totalAmount,
+          statistics: {
+            totalProductsSold: totalProductsSold + totalProducts,
+            mostPopularProduct: mostPopularProduct || topItem?.productName,
+          },
+        },
+        overrideAccess: true,
+      })
+    } catch (sessionUpdateError) {
+      console.error('Failed to update session statistics:', sessionUpdateError)
+      // Compensation: Rollback member balance and mark order as failed
+      try {
+        const originalTabBalance =
+          typeof member.tabBalance === 'number' ? member.tabBalance : 0
+
+        await payload.update({
+          collection: 'members',
+          id: memberId,
+          data: {
+            tabBalance: originalTabBalance,
+          },
+          overrideAccess: true,
+        })
+
+        await payload.update({
+          collection: 'orders',
+          id: createdOrder.id,
+          data: {
+            status: 'failed',
+          },
+          overrideAccess: true,
+        })
+      } catch (compensationError) {
+        console.error('Failed to compensate after session update failure:', compensationError)
+      }
+      throw new Error('Sitzungsstatistiken konnten nicht aktualisiert werden')
+    }
 
     return { success: true, order: createdOrder }
   } catch (error) {

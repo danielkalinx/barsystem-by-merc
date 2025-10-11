@@ -272,6 +272,10 @@ export interface Session {
    */
   endTime?: string | null;
   /**
+   * Automatisch berechnet beim Schließen der Sitzung
+   */
+  durationMinutes?: number | null;
+  /**
    * Müssen VOR der Sitzungsaktivierung definiert werden
    */
   bartenders?:
@@ -318,7 +322,10 @@ export interface Order {
    * Berechnet aus Positionen (Anzahl × Preis zum Bestellzeitpunkt)
    */
   totalAmount: number;
-  status?: ('pending' | 'completed' | 'cancelled') | null;
+  /**
+   * "Fehlgeschlagen" bedeutet, dass die Bestellung aufgrund eines Systemfehlers nicht vollständig verarbeitet werden konnte
+   */
+  status?: ('pending' | 'completed' | 'cancelled' | 'failed') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -530,6 +537,7 @@ export interface SessionsSelect<T extends boolean = true> {
   createdBy?: T;
   startTime?: T;
   endTime?: T;
+  durationMinutes?: T;
   bartenders?:
     | T
     | {
