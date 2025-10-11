@@ -187,7 +187,7 @@
     @apply h-full m-0 p-0;
   }
   body {
-    @apply bg-secondary text-foreground;
+    @apply bg-background text-foreground;
   }
 
   body.no-navbar header {
@@ -196,5 +196,15 @@
 
   body.no-navbar main {
     @apply p-0 w-full max-w-none mx-0;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }

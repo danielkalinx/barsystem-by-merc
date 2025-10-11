@@ -11,6 +11,11 @@ export function SidebarMobile() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [showFloating, setShowFloating] = useState(false)
   const [lastScrollY, setLastScrollY] = useState(0)
+  const [colors, setColors] = useState({
+    primary: '',
+    primaryForeground: '',
+    mutedForeground: '',
+  })
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,36 +46,68 @@ export function SidebarMobile() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [lastScrollY])
 
-  const NavContent = () => (
-    <>
-      {NAV_ITEMS.map((item) => {
-        const isActive = pathname === item.href
-        const Icon = item.icon
+  // Compute colors after hydration
+  useEffect(() => {
+    const styles = getComputedStyle(document.documentElement)
+    setColors({
+      primary: styles.getPropertyValue('--primary'),
+      primaryForeground: styles.getPropertyValue('--primary-foreground'),
+      mutedForeground: styles.getPropertyValue('--muted-foreground'),
+    })
+  }, [])
 
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
-              isActive
-                ? 'bg-primary text-primary-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Icon className="size-4" />
-            <span>{item.title}</span>
-          </Link>
-        )
-      })}
-    </>
-  )
+  const NavContent = () => {
+
+    return (
+      <>
+        {NAV_ITEMS.map((item) => {
+          const isActive = pathname === item.href
+          const Icon = item.icon
+
+          return (
+            <Link key={item.href} href={item.href} className="shrink-0">
+              <motion.div
+                initial={false}
+                animate={{
+                  backgroundColor: isActive ? colors.primary : 'transparent',
+                  color: isActive ? colors.primaryForeground : colors.mutedForeground,
+                }}
+                transition={{
+                  duration: 0.4,
+                  ease: [0.4, 0, 0.2, 1],
+                }}
+                className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium"
+              >
+                <Icon className="size-4 shrink-0" />
+                <motion.span
+                  initial={false}
+                  animate={{
+                    width: isActive ? 'auto' : 0,
+                    opacity: isActive ? 1 : 0,
+                    marginLeft: isActive ? '0.5rem' : 0,
+                  }}
+                  transition={{
+                    duration: 0.4,
+                    ease: [0.4, 0, 0.2, 1],
+                  }}
+                  className="overflow-hidden whitespace-nowrap"
+                >
+                  {item.title}
+                </motion.span>
+              </motion.div>
+            </Link>
+          )
+        })}
+      </>
+    )
+  }
 
   return (
     <>
       {/* Static Navigation (always visible, scrolls with content) */}
       <header className="absolute top-0 z-50 w-full lg:hidden">
         <div className="container mx-auto px-6 pt-6">
-          <div className="flex items-center gap-2 overflow-x-auto">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
             <NavContent />
           </div>
         </div>
@@ -89,7 +126,7 @@ export function SidebarMobile() {
             <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background/40 to-background/0" />
 
             <div className="container relative mx-auto px-6 pt-6">
-              <div className="flex items-center gap-2 overflow-x-auto rounded-full border border-border/50 bg-background/95 px-4 py-3 backdrop-blur-md">
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide rounded-full border border-border/50 bg-background/95 px-4 py-3 backdrop-blur-md">
                 <NavContent />
               </div>
             </div>
