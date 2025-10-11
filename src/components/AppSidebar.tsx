@@ -1,11 +1,10 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { LogOut } from 'lucide-react'
-import { motion } from 'motion/react'
 import {
   Sidebar,
   SidebarContent,
@@ -33,47 +32,19 @@ export function AppSidebar() {
   const pathname = usePathname()
   const [settings, setSettings] = useState<Settings | null>(null)
   const [user, setUser] = useState<Member | null>(null)
-  const itemRefs = useRef<(HTMLLIElement | null)[]>([])
-  const [activeIndex, setActiveIndex] = useState(0)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-  const [indicatorStyle, setIndicatorStyle] = useState({ top: 0, height: 0 })
+  const [indicatorStyle, setIndicatorStyle] = useState({ top: 0, height: 48 })
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([])
 
+  const activeIndex = useMemo(
+    () => NAV_ITEMS.findIndex((item) => item.href === pathname),
+    [pathname],
+  )
+
+  const targetIndex = hoveredIndex ?? activeIndex
+
+  // Update indicator position
   useEffect(() => {
-    // Fetch settings
-    fetch('/api/globals/settings')
-      .then((res) => res.json())
-      .then((data) => setSettings(data))
-      .catch((err) => console.error('Failed to fetch settings:', err))
-
-    // Fetch current user
-    fetch('/api/members/me')
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data?.user) {
-          setUser(data.user)
-        }
-      })
-      .catch((err) => console.error('Failed to fetch user:', err))
-  }, [])
-
-  // Update active indicator position
-  useEffect(() => {
-    const currentIndex = NAV_ITEMS.findIndex((item) => item.href === pathname)
-    if (currentIndex !== -1) {
-      setActiveIndex(currentIndex)
-      const activeElement = itemRefs.current[currentIndex]
-      if (activeElement) {
-        setIndicatorStyle({
-          top: activeElement.offsetTop,
-          height: activeElement.offsetHeight,
-        })
-      }
-    }
-  }, [pathname])
-
-  // Update indicator position based on hover or active state
-  useEffect(() => {
-    const targetIndex = hoveredIndex !== null ? hoveredIndex : activeIndex
     const targetElement = itemRefs.current[targetIndex]
     if (targetElement) {
       setIndicatorStyle({
@@ -81,10 +52,20 @@ export function AppSidebar() {
         height: targetElement.offsetHeight,
       })
     }
-  }, [hoveredIndex, activeIndex])
+  }, [targetIndex])
 
-  const logoSrc = settings?.logo?.url || '/images/merc-logo.png'
-  const fraternityName = settings?.fraternityName || 'K.Ö.H.V. Mercuria'
+  // Fetch settings and user
+  useEffect(() => {
+    fetch('/api/globals/settings')
+      .then((res) => res.json())
+      .then(setSettings)
+      .catch(console.error)
+
+    fetch('/api/members/me')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => data?.user && setUser(data.user))
+      .catch(console.error)
+  }, [])
 
   const handleLogout = async () => {
     try {
@@ -100,13 +81,15 @@ export function AppSidebar() {
       <SidebarHeader className="border-b p-6">
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src={logoSrc}
-            alt={`${fraternityName} Logo`}
+            src={settings?.logo?.url || '/images/merc-logo.png'}
+            alt={`${settings?.fraternityName || 'Logo'}`}
             width={32}
             height={32}
             className="size-8"
           />
-          <span className="text-base font-semibold">{fraternityName}</span>
+          <span className="text-base font-semibold">
+            {settings?.fraternityName || 'K.Ö.H.V. Mercuria'}
+          </span>
         </Link>
       </SidebarHeader>
 
@@ -115,25 +98,19 @@ export function AppSidebar() {
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="relative">
-              {/* Animated background indicator */}
-              <motion.div
-                className="absolute left-0 w-full rounded-xl bg-[#f5f5f5] dark:bg-[#202020]"
-                animate={{
-                  top: indicatorStyle.top,
-                  height: indicatorStyle.height,
+              {/* Single animated indicator */}
+              <div
+                className="pointer-events-none absolute left-0 right-0 rounded-xl bg-muted transition-all duration-200 ease-out"
+                style={{
+                  top: `${indicatorStyle.top}px`,
+                  height: `${indicatorStyle.height}px`,
                 }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 400,
-                  damping: 25,
-                  mass: 0.5,
-                }}
-                style={{ zIndex: 0 }}
               />
 
+              {/* Nav items */}
               {NAV_ITEMS.map((item, index) => {
-                const isActive = pathname === item.href
                 const Icon = item.icon
+                const isActive = pathname === item.href
 
                 return (
                   <SidebarMenuItem
@@ -141,16 +118,14 @@ export function AppSidebar() {
                     ref={(el) => {
                       itemRefs.current[index] = el
                     }}
-                    className="relative"
-                    style={{ zIndex: 1 }}
                     onMouseEnter={() => setHoveredIndex(index)}
                     onMouseLeave={() => setHoveredIndex(null)}
                   >
                     <Link
                       href={item.href}
-                      className="flex h-12 w-full items-center gap-3 rounded-xl px-3 text-base transition-colors"
+                      className="relative flex h-12 w-full items-center gap-3 rounded-xl px-3 text-base"
                     >
-                      <Icon className="size-5" />
+                      <Icon className="size-5 shrink-0" />
                       <span className={isActive ? 'font-medium' : ''}>{item.title}</span>
                     </Link>
                   </SidebarMenuItem>
@@ -175,7 +150,7 @@ export function AppSidebar() {
             </div>
             <button
               onClick={handleLogout}
-              className="flex w-full items-center gap-2 rounded-lg p-2 text-sm text-muted-foreground transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              className="flex w-full items-center gap-2 rounded-lg p-2 text-sm text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             >
               <LogOut className="size-4" />
               <span>Abmelden</span>

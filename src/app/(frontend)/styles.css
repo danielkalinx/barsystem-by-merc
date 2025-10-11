@@ -66,6 +66,7 @@
 }
 
 :root {
+  --radius: 0.5rem;
   --primary: oklch(0.540 0.220 28.865);
   --accent: oklch(97.913% 0.00011 271.152);
   --background: oklch(100% 0.00011 271.152);
@@ -104,6 +105,7 @@
 }
 
 .dark {
+  --radius: 0.5rem;
   --primary: oklch(0.560 0.190 25.241);
   --accent-foreground: oklch(0.922 0.000 0.000);
   --background: oklch(0.191 0.000 0.000);
